@@ -40,4 +40,20 @@ public class DoctorService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public Doctor getDoctor(long doctorID) {
+        return doctorRepository.findById(doctorID).orElse(null);
+    }
+
+    public boolean deleteDoctor(long doctorID) {
+        try {
+            if (!doctorRepository.existsById(doctorID)) {
+                return false;
+            }
+            doctorRepository.deleteById(doctorID);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
