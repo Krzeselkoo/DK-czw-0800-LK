@@ -12,8 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -61,5 +62,74 @@ class DoctorServiceTest {
         assertEquals(2, result.size());
         assertEquals("Jan", result.get(0).firstName());
         assertEquals("Kardiolog", result.get(0).specialization());
+    }
+
+    @Test
+    void shouldGetDoctorByIdWhenExists() {
+        // given
+        long doctorId = 1L;
+        Doctor doctor = new Doctor(1L, "Jan", "Kowalski", "123", "Kardiolog", "Wawa");
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
+
+        // when
+        Doctor result = doctorService.getDoctor(doctorId);
+
+        // then
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Jan", result.getFirstName());
+    }
+
+    @Test
+    void shouldReturnNullWhenDoctorNotFound() {
+        // given
+        long doctorId = 99L;
+        when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
+
+        // when
+        Doctor result = doctorService.getDoctor(doctorId);
+
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void shouldDeleteDoctorWhenExistsAndReturnTrue() {
+        // given
+        long doctorId = 1L;
+        when(doctorRepository.existsById(doctorId)).thenReturn(true);
+
+        // when
+        boolean deleted = doctorService.deleteDoctor(doctorId);
+
+        // then
+        assertTrue(deleted);
+    }
+
+    @Test
+    void shouldReturnFalseWhenDoctorDoesNotExistOnDelete() {
+        // given
+        long doctorId = 42L;
+        when(doctorRepository.existsById(doctorId)).thenReturn(false);
+
+        // when
+        boolean deleted = doctorService.deleteDoctor(doctorId);
+
+        // then
+        assertFalse(deleted);
+    }
+
+    @Test
+    void shouldReturnFalseWhenDeleteThrowsException() {
+        // given
+        long doctorId = 5L;
+        when(doctorRepository.existsById(doctorId)).thenReturn(true);
+        doThrow(new RuntimeException("DB error")).when(doctorRepository).deleteById(doctorId);
+
+        // when
+        boolean deleted = doctorService.deleteDoctor(doctorId);
+
+        // then
+        assertFalse(deleted);
     }
 }
