@@ -2,6 +2,8 @@ package com.clinic.management.service;
 
 import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.repository.DoctorRepository;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +23,11 @@ public class InitDataService {
         doctorRepository.save(new Doctor("Charlie", "Davis", "56789012345", "Dermatology", "202 Maple St"));
         doctorRepository.save(new Doctor("Diana", "Wilson", "67890123456", "Radiology", "303 Birch St"));
         doctorRepository.save(new Doctor("Eve", "Taylor", "78901234567", "Dermatology", "404 Cedar St"));
-        System.out.println("Doctors generated and saved to the database");
+    }
+
+    @PostConstruct
+    public void databaseClean(){
+        doctorRepository.deleteAll();
     }
 
 }
