@@ -2,7 +2,7 @@ package com.clinic.management.service;
 
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
-import com.clinic.management.model.Doctor;
+import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,13 +18,13 @@ public class DoctorService {
 
 
     public void addDoctor(DoctorRequest request) {
-        Doctor doctor = Doctor.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .pesel(request.pesel())
-                .specialization(request.specialization())
-                .address(request.address())
-                .build();
+        Doctor doctor = new Doctor(
+                request.firstName(),
+                request.lastName(),
+                request.pesel(),
+                request.specialization(),
+                request.address());
+
 
         doctorRepository.save(doctor);
     }

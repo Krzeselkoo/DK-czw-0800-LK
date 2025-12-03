@@ -2,7 +2,7 @@ package com.clinic.management.service;
 
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
-import com.clinic.management.model.Doctor;
+import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.repository.DoctorRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,8 +50,8 @@ class DoctorServiceTest {
     @Test
     void shouldGetAllDoctorsAsSummary() {
         // given
-        Doctor doctor1 = new Doctor(1L, "Jan", "Kowalski", "123", "Kardiolog", "Wawa");
-        Doctor doctor2 = new Doctor(2L, "Anna", "Nowak", "456", "Dermatolog", "Kraków");
+        Doctor doctor1 = new Doctor("Jan", "Kowalski", "123", "Kardiolog", "Wawa");
+        Doctor doctor2 = new Doctor("Anna", "Nowak", "456", "Dermatolog", "Kraków");
 
         when(doctorRepository.findAll()).thenReturn(List.of(doctor1, doctor2));
 
@@ -68,7 +68,9 @@ class DoctorServiceTest {
     void shouldGetDoctorByIdWhenExists() {
         // given
         long doctorId = 1L;
-        Doctor doctor = new Doctor(1L, "Jan", "Kowalski", "123", "Kardiolog", "Wawa");
+        Doctor doctor = new Doctor("Jan", "Kowalski", "123", "Kardiolog", "Wawa");
+        doctor.setId(doctorId);
+
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
 
         // when
@@ -76,7 +78,7 @@ class DoctorServiceTest {
 
         // then
         assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertEquals(doctorId, result.getId());
         assertEquals("Jan", result.getFirstName());
     }
 

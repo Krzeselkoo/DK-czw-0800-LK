@@ -1,6 +1,6 @@
 package com.clinic.management.controller;
 
-import com.clinic.management.model.Doctor;
+import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
 import com.clinic.management.service.DoctorService;
