@@ -3,6 +3,7 @@ package com.clinic.management.service;
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
 import com.clinic.management.model.entity.Doctor;
+import com.clinic.management.model.util.DoctorSpecialization;
 import com.clinic.management.repository.DoctorRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ class DoctorServiceTest {
     void shouldAddDoctorSuccessfully() {
         // given
         DoctorRequest request = new DoctorRequest(
-                "Jan", "Kowalski", "12345678901", "Kardiolog", "Warszawa"
+                "Jan", "Kowalski", "12345678901", DoctorSpecialization.OTOLARYNGOLOGIST, "Warszawa"
         );
 
         // when
@@ -44,14 +45,14 @@ class DoctorServiceTest {
         verify(doctorRepository).save(doctorCaptor.capture());
         Doctor savedDoctor = doctorCaptor.getValue();
         assertEquals("Jan", savedDoctor.getFirstName());
-        assertEquals("Kardiolog", savedDoctor.getSpecialization());
+        assertEquals(DoctorSpecialization.OTOLARYNGOLOGIST, savedDoctor.getSpecialization());
     }
 
     @Test
     void shouldGetAllDoctorsAsSummary() {
         // given
-        Doctor doctor1 = new Doctor("Jan", "Kowalski", "123", "Kardiolog", "Wawa");
-        Doctor doctor2 = new Doctor("Anna", "Nowak", "456", "Dermatolog", "Kraków");
+        Doctor doctor1 = new Doctor("Jan", "Kowalski", "123", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
+        Doctor doctor2 = new Doctor("Anna", "Nowak", "456", DoctorSpecialization.NEUROLOGIST, "Kraków");
 
         when(doctorRepository.findAll()).thenReturn(List.of(doctor1, doctor2));
 
@@ -61,14 +62,14 @@ class DoctorServiceTest {
         // then
         assertEquals(2, result.size());
         assertEquals("Jan", result.get(0).firstName());
-        assertEquals("Kardiolog", result.get(0).specialization());
+        assertEquals(DoctorSpecialization.OTOLARYNGOLOGIST, result.get(0).specialization());
     }
 
     @Test
     void shouldGetDoctorByIdWhenExists() {
         // given
         long doctorId = 1L;
-        Doctor doctor = new Doctor("Jan", "Kowalski", "123", "Kardiolog", "Wawa");
+        Doctor doctor = new Doctor("Jan", "Kowalski", "123", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
         doctor.setId(doctorId);
 
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));

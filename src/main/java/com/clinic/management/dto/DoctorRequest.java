@@ -1,9 +1,11 @@
 package com.clinic.management.dto;
 
+import com.clinic.management.model.util.DoctorSpecialization;
+
 public record DoctorRequest(
         String firstName,
         String lastName,
         String pesel,
-        String specialization,
+        DoctorSpecialization specialization,
         String address
 ) {}

@@ -1,6 +1,8 @@
 package com.clinic.management.repository;
 
 import com.clinic.management.model.entity.Doctor;
+import com.clinic.management.model.util.DoctorSpecialization;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,13 +26,14 @@ class RepositoryTest {
     }
 
     @Test
+    @Transactional
     void shouldAddDoctor(){
         //Given
         Doctor doctor1 = new Doctor();
         doctor1.setFirstName("John");
         doctor1.setLastName("Doe");
         doctor1.setPESEL("12345678901");
-        doctor1.setSpecialization("Cardiology");
+        doctor1.setSpecialization(DoctorSpecialization.OTOLARYNGOLOGIST);
         doctor1.setAddress("ABC");
 
         //When
@@ -42,25 +45,26 @@ class RepositoryTest {
         assertThat(savedDoctor.get().getFirstName()).isEqualTo("John");
         assertThat(savedDoctor.get().getLastName()).isEqualTo("Doe");
         assertThat(savedDoctor.get().getPESEL()).isEqualTo("12345678901");
-        assertThat(savedDoctor.get().getSpecialization()).isEqualTo("Cardiology");
+        assertThat(savedDoctor.get().getSpecialization()).isEqualTo(DoctorSpecialization.OTOLARYNGOLOGIST);
         assertThat(savedDoctor.get().getAddress()).isEqualTo("ABC");
     }
 
     @Test
+    @Transactional
     void shouldThrowExceptionWhenAddingDoctorsWithSamePesel() {
         // Given
         Doctor doctor1 = new Doctor();
         doctor1.setFirstName("John");
         doctor1.setLastName("Doe");
         doctor1.setPESEL("12345678901");
-        doctor1.setSpecialization("Cardiology");
+        doctor1.setSpecialization(DoctorSpecialization.NEUROLOGIST);
         doctor1.setAddress("ABC");
 
         Doctor doctor2 = new Doctor();
         doctor2.setFirstName("Johna");
         doctor2.setLastName("Dou");
         doctor2.setPESEL("12345678901");
-        doctor2.setSpecialization("Surgeon");
+        doctor2.setSpecialization(DoctorSpecialization.OTOLARYNGOLOGIST);
         doctor2.setAddress("CBA");
 
         doctorRepository.saveAndFlush(doctor1);

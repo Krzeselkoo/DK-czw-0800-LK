@@ -1,5 +1,6 @@
 package com.clinic.management.model.entity;
 
+import com.clinic.management.model.util.DoctorSpecialization;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +25,8 @@ public class Doctor {
     private String PESEL;
 
     @NonNull
-    private String specialization;
+    @Enumerated(EnumType.STRING)
+    private DoctorSpecialization specialization;
 
     @NonNull
     private String address;
