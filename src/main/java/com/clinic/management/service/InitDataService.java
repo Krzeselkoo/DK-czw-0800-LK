@@ -15,6 +15,10 @@ public class InitDataService {
         this.doctorRepository = doctorRepository;
     }
 
+    /**
+     * Populates the database with predefined doctor entities.
+     * This method saves a list of doctors with their details into the repository.
+     */
     public void initialize() {
         doctorRepository.save(new Doctor("John", "Doe", "12345678901", DoctorSpecialization.OTOLARYNGOLOGIST, "123 Main St"));
         doctorRepository.save(new Doctor("Jane", "Smith", "23456789012", DoctorSpecialization.OTOLARYNGOLOGIST, "456 Elm St"));

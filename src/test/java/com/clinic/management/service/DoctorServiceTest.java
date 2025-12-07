@@ -2,6 +2,7 @@ package com.clinic.management.service;
 
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
+import com.clinic.management.exception.DoctorNotFoundException;
 import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.model.util.DoctorSpecialization;
 import com.clinic.management.repository.DoctorRepository;
@@ -51,8 +52,8 @@ class DoctorServiceTest {
     @Test
     void shouldGetAllDoctorsAsSummary() {
         // given
-        Doctor doctor1 = new Doctor("Jan", "Kowalski", "123", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
-        Doctor doctor2 = new Doctor("Anna", "Nowak", "456", DoctorSpecialization.NEUROLOGIST, "Kraków");
+        Doctor doctor1 = new Doctor("Jan", "Kowalski", "12312312312", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
+        Doctor doctor2 = new Doctor("Anna", "Nowak", "45645645645", DoctorSpecialization.NEUROLOGIST, "Kraków");
 
         when(doctorRepository.findAll()).thenReturn(List.of(doctor1, doctor2));
 
@@ -69,7 +70,7 @@ class DoctorServiceTest {
     void shouldGetDoctorByIdWhenExists() {
         // given
         long doctorId = 1L;
-        Doctor doctor = new Doctor("Jan", "Kowalski", "123", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
+        Doctor doctor = new Doctor("Jan", "Kowalski", "12312312312", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
         doctor.setId(doctorId);
 
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
@@ -89,11 +90,9 @@ class DoctorServiceTest {
         long doctorId = 99L;
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
 
-        // when
-        Doctor result = doctorService.getDoctor(doctorId);
+        // when & then
+        assertThrows(DoctorNotFoundException.class, () -> doctorService.getDoctor(doctorId));
 
-        // then
-        assertNull(result);
     }
 
     @Test

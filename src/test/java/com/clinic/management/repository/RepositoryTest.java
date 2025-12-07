@@ -32,7 +32,7 @@ class RepositoryTest {
         Doctor doctor1 = new Doctor();
         doctor1.setFirstName("John");
         doctor1.setLastName("Doe");
-        doctor1.setPESEL("12345678901");
+        doctor1.setPesel("12345678901");
         doctor1.setSpecialization(DoctorSpecialization.OTOLARYNGOLOGIST);
         doctor1.setAddress("ABC");
 
@@ -44,7 +44,7 @@ class RepositoryTest {
         assertThat(savedDoctor).isPresent();
         assertThat(savedDoctor.get().getFirstName()).isEqualTo("John");
         assertThat(savedDoctor.get().getLastName()).isEqualTo("Doe");
-        assertThat(savedDoctor.get().getPESEL()).isEqualTo("12345678901");
+        assertThat(savedDoctor.get().getPesel()).isEqualTo("12345678901");
         assertThat(savedDoctor.get().getSpecialization()).isEqualTo(DoctorSpecialization.OTOLARYNGOLOGIST);
         assertThat(savedDoctor.get().getAddress()).isEqualTo("ABC");
     }
@@ -56,14 +56,14 @@ class RepositoryTest {
         Doctor doctor1 = new Doctor();
         doctor1.setFirstName("John");
         doctor1.setLastName("Doe");
-        doctor1.setPESEL("12345678901");
+        doctor1.setPesel("12345678901");
         doctor1.setSpecialization(DoctorSpecialization.NEUROLOGIST);
         doctor1.setAddress("ABC");
 
         Doctor doctor2 = new Doctor();
         doctor2.setFirstName("Johna");
         doctor2.setLastName("Dou");
-        doctor2.setPESEL("12345678901");
+        doctor2.setPesel("12345678901");
         doctor2.setSpecialization(DoctorSpecialization.OTOLARYNGOLOGIST);
         doctor2.setAddress("CBA");
 
