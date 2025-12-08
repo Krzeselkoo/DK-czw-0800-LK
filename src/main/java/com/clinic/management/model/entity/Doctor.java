@@ -2,7 +2,6 @@ package com.clinic.management.model.entity;
 
 import com.clinic.management.model.util.DoctorSpecialization;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity

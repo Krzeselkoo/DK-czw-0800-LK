@@ -1,7 +1,5 @@
 package com.clinic.management.controller;
 
-import com.clinic.management.exception.DoctorNotFoundException;
-import com.clinic.management.exception.DuplicatePeselException;
 import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
@@ -16,12 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/doctors")
