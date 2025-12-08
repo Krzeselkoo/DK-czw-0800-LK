@@ -100,24 +100,5 @@ public class DoctorController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @ExceptionHandler(DuplicatePeselException.class)
-    public ResponseEntity<String> handleDuplicatePesel(DuplicatePeselException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(DoctorNotFoundException.class)
-    public ResponseEntity<String> handleDoctorNotFound(DoctorNotFoundException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    }
-
 }
 
