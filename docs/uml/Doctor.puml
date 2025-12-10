@@ -1,0 +1,67 @@
+@startuml
+class Doctor {
+    - Long id
+    - String firstName
+    - String lastName
+    - String pesel
+    - DoctorSpecialization specialization
+    - String address
+}
+
+class DoctorRequest {
+    - String firstName
+    - String lastName
+    - String pesel
+    - DoctorSpecialization specialization
+    - String address
+}
+
+class DoctorSummaryResponse {
+    - Long id
+    - String firstName
+    - String lastName
+    - DoctorSpecialization specialization
+}
+
+class DoctorService {
+    + void addDoctor(DoctorRequest request)
+    + List<DoctorSummaryResponse> getAllDoctors()
+    + Doctor getDoctor(long doctorID)
+    + boolean deleteDoctor(long doctorID)
+}
+
+class DoctorRepository {
+    + boolean existsByPesel(String pesel)
+    + save(Doctor doctor)
+    + findById(Long id)
+    + findAll()
+    + deleteById(Long id)
+}
+
+class DoctorController {
+    + void addDoctor(DoctorRequest doctorRequest)
+    + List<DoctorSummaryResponse> getDoctors()
+    + Doctor getDoctor(long id)
+    + ResponseEntity<Void> deleteDoctor(long id)
+}
+
+enum DoctorSpecialization {
+    OTOLARYNGOLOGIST
+    OPHTHALMOLOGIST
+    NEUROLOGIST
+    PSYCHOLOGIST
+}
+
+Doctor *- DoctorSpecialization
+DoctorRequest ..> DoctorSpecialization
+DoctorSummaryResponse ..> DoctorSpecialization
+DoctorService ..> Doctor
+DoctorService ..> DoctorRequest
+DoctorService ..> DoctorSummaryResponse
+DoctorService --> DoctorRepository
+DoctorController --> DoctorService
+DoctorController ..> DoctorRequest
+DoctorController ..> DoctorSummaryResponse
+DoctorController ..> Doctor
+DoctorRepository ..> Doctor
+@enduml
