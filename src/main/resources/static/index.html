@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clinic Management API Demo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #navbar {
+            background-color: #eee;
+            padding: 10px;
+        }
+
+        #navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        #navbar li {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        #navbar li.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        #view-container {
+            padding: 15px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        fieldset {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        textarea {
+            height: 150px;
+        }
+
+        button {
+            margin-top: 5px;
+        }
+
+        #output {
+            margin-top: 20px;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+
+<div id="view-container">
+    <section id="view-doctors" class="view"></section>
+
+    <!-- Kolejne widoki możesz dorabiać w ten sposób:
+    <section id="view-patients" class="view"></section>
+    -->
+</div>
+
+<pre id="output">Response output will appear here...</pre>
+
+<script>
+    // Konfiguracja "podstron"
+    var PAGES = [
+        { id: 'doctors', label: 'Doctors', render: renderDoctorsView }
+        // np. { id: 'patients', label: 'Patients', render: renderPatientsView }
+    ];
+
+    var API_BASE = '/api';
+
+    function init() {
+        renderNavbar();
+        renderAllViews();
+        showView('doctors'); // domyślna podstrona
+    }
+
+    function renderNavbar() {
+        var navbar = document.getElementById('navbar');
+        var nav = document.createElement('nav');
+        var ul = document.createElement('ul');
+
+        for (var i = 0; i < PAGES.length; i++) {
+            (function (page) {
+                var li = document.createElement('li');
+                li.textContent = page.label;
+                li.setAttribute('data-page-id', page.id);
+                li.addEventListener('click', function () {
+                    showView(page.id);
+                });
+                ul.appendChild(li);
+            })(PAGES[i]);
+        }
+
+        nav.appendChild(ul);
+        navbar.appendChild(nav);
+    }
+
+    function setActiveNavbarItem(pageId) {
+        var navbar = document.getElementById('navbar');
+        var items = navbar.querySelectorAll('li');
+        for (var i = 0; i < items.length; i++) {
+            var li = items[i];
+            if (li.getAttribute('data-page-id') === pageId) {
+                li.classList.add('active');
+            } else {
+                li.classList.remove('active');
+            }
+        }
+    }
+
+    function renderAllViews() {
+        for (var i = 0; i < PAGES.length; i++) {
+            PAGES[i].render();
+        }
+    }
+
+    function showView(pageId) {
+        var container = document.getElementById('view-container');
+        var views = container.querySelectorAll('.view');
+        for (var i = 0; i < views.length; i++) {
+            views[i].classList.remove('active');
+        }
+
+        var view = document.getElementById('view-' + pageId);
+        if (view) {
+            view.classList.add('active');
+        }
+
+        setActiveNavbarItem(pageId);
+    }
+
+    function setOutput(text) {
+        var out = document.getElementById('output');
+        out.textContent = text;
+    }
+
+    function handleFetchResponse(response) {
+        var statusLine = 'Status: ' + response.status + ' ' + response.statusText + '\n\n';
+        return response.text().then(function (body) {
+            if (!body) {
+                body = '<empty body>';
+            }
+            setOutput(statusLine + body);
+        }).catch(function (err) {
+            setOutput(statusLine + 'Error reading body: ' + err);
+        });
+    }
+
+    function handleFetchError(error) {
+        setOutput('Network error or CORS problem:\n' + error);
+    }
+
+    // ===== Widok DOCTORS =====
+    function renderDoctorsView() {
+        var view = document.getElementById('view-doctors');
+        view.innerHTML = '';
+
+        var title = document.createElement('h2');
+        title.textContent = 'Doctors API';
+        view.appendChild(title);
+
+        // --- Load all doctors ---
+        var fsList = document.createElement('fieldset');
+        var legendList = document.createElement('legend');
+        legendList.textContent = 'Get all doctors (GET /api/doctors)';
+        fsList.appendChild(legendList);
+
+        var btnLoad = document.createElement('button');
+        btnLoad.textContent = 'Load all doctors';
+        btnLoad.addEventListener('click', function () {
+            fetch(API_BASE + '/doctors', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(handleFetchResponse)
+                .catch(handleFetchError);
+        });
+        fsList.appendChild(btnLoad);
+        view.appendChild(fsList);
+
+        // --- Get doctor by ID ---
+        var fsGet = document.createElement('fieldset');
+        var legendGet = document.createElement('legend');
+        legendGet.textContent = 'Get doctor by ID (GET /api/doctors/{id})';
+        fsGet.appendChild(legendGet);
+
+        var labelGet = document.createElement('label');
+        labelGet.textContent = 'Doctor ID:';
+        fsGet.appendChild(labelGet);
+
+        var inputGet = document.createElement('input');
+        inputGet.type = 'text';
+        inputGet.placeholder = 'e.g. 1';
+        fsGet.appendChild(inputGet);
+
+        var brGet = document.createElement('br');
+        fsGet.appendChild(brGet);
+
+        var btnGet = document.createElement('button');
+        btnGet.textContent = 'Get doctor';
+        btnGet.addEventListener('click', function () {
+            var id = inputGet.value;
+            if (!id) {
+                alert('Please provide doctor ID');
+                return;
+            }
+
+            fetch(API_BASE + '/doctors/' + encodeURIComponent(id), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(handleFetchResponse)
+                .catch(handleFetchError);
+        });
+        fsGet.appendChild(btnGet);
+        view.appendChild(fsGet);
+
+        // --- Delete doctor by ID ---
+        var fsDelete = document.createElement('fieldset');
+        var legendDelete = document.createElement('legend');
+        legendDelete.textContent = 'Delete doctor by ID (DELETE /api/doctors/{id})';
+        fsDelete.appendChild(legendDelete);
+
+        var labelDelete = document.createElement('label');
+        labelDelete.textContent = 'Doctor ID:';
+        fsDelete.appendChild(labelDelete);
+
+        var inputDelete = document.createElement('input');
+        inputDelete.type = 'text';
+        inputDelete.placeholder = 'e.g. 1';
+        fsDelete.appendChild(inputDelete);
+
+        var brDelete = document.createElement('br');
+        fsDelete.appendChild(brDelete);
+
+        var btnDelete = document.createElement('button');
+        btnDelete.textContent = 'Delete doctor';
+        btnDelete.addEventListener('click', function () {
+            var id = inputDelete.value;
+            if (!id) {
+                alert('Please provide doctor ID');
+                return;
+            }
+
+            fetch(API_BASE + '/doctors/' + encodeURIComponent(id), {
+                method: 'DELETE'
+            })
+                .then(handleFetchResponse)
+                .catch(handleFetchError);
+        });
+        fsDelete.appendChild(btnDelete);
+        view.appendChild(fsDelete);
+
+        // --- Create doctor (raw JSON) ---
+        var fsCreate = document.createElement('fieldset');
+        var legendCreate = document.createElement('legend');
+        legendCreate.textContent = 'Create doctor (POST /api/doctors)';
+        fsCreate.appendChild(legendCreate);
+
+        var infoCreate = document.createElement('p');
+        infoCreate.textContent = 'Paste JSON matching DoctorRequest. Example structure (dopasuj do swojego DTO):';
+        fsCreate.appendChild(infoCreate);
+
+        var textarea = document.createElement('textarea');
+        textarea.value = JSON.stringify({
+            firstName: "Jan",
+            lastName: "Kowalski",
+            pesel: "80010112345",
+            specialization: "OTOLARYNGOLOGIST",
+            address: "Krakow, Jana Matejki 34, 31-330"
+        }, null, 2);
+        fsCreate.appendChild(textarea);
+
+        var brCreate = document.createElement('br');
+        fsCreate.appendChild(brCreate);
+
+        var btnCreate = document.createElement('button');
+        btnCreate.textContent = 'Create doctor';
+        btnCreate.addEventListener('click', function () {
+            var raw = textarea.value;
+            var payload;
+
+            try {
+                payload = JSON.parse(raw);
+            } catch (e) {
+                alert('Invalid JSON: ' + e);
+                return;
+            }
+
+            fetch(API_BASE + '/doctors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(handleFetchResponse)
+                .catch(handleFetchError);
+        });
+        fsCreate.appendChild(btnCreate);
+        view.appendChild(fsCreate);
+    }
+
+    // Przykład nowego widoku
+    /*
+    function renderPatientsView() {
+        var view = document.getElementById('view-patients');
+        view.innerHTML = '';
+        var h = document.createElement('h2');
+        h.textContent = 'Patients API (TODO)';
+        view.appendChild(h);
+    }
+    */
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
