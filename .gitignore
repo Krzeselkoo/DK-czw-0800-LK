@@ -39,3 +39,5 @@ out/
 # H2 database files
 *.mv.db
 *.trace.db
+
+src/main/resources/application-dev.properties
