@@ -23,11 +23,13 @@ public class DoctorService {
      *
      * @param request the request object containing doctor details
      * @throws DuplicatePeselException if a doctor with the same PESEL already exists
+     * @return new doctor's ID
      */
-    public void addDoctor(DoctorRequest request) {
+    public long addDoctor(DoctorRequest request) {
         if (doctorRepository.existsByPesel(request.getPesel())) {
             throw new DuplicatePeselException("Doctor with PESEL" + request.getPesel());
         }
+
         Doctor doctor = new Doctor(
                 request.getFirstName(),
                 request.getLastName(),
@@ -36,8 +38,8 @@ public class DoctorService {
                 request.getAddress()
         );
 
-
-        doctorRepository.save(doctor);
+        doctor = doctorRepository.save(doctor);
+        return doctor.getId();
     }
 
     /**
@@ -61,28 +63,29 @@ public class DoctorService {
      * Retrieves a specific doctor by their ID.
      *
      * @param doctorID the ID of the doctor to retrieve
-     * @return the doctor entity
+     * @return the doctor summary response
      * @throws DoctorNotFoundException if no doctor is found with the given ID
      */
-    public Doctor getDoctor(long doctorID) {
-        return doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
+    public DoctorSummaryResponse getDoctor(long doctorID) {
+        Doctor doctor = doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
+        return new DoctorSummaryResponse(
+                doctor.getId(),
+                doctor.getFirstName(),
+                doctor.getLastName(),
+                doctor.getSpecialization()
+        );
     }
 
     /**
      * Deletes a specific doctor by their ID.
      *
      * @param doctorID the ID of the doctor to delete
-     * @return true if the doctor was successfully deleted, false otherwise
+     * @throws DoctorNotFoundException when there is no doctor with supplied ID
      */
-    public boolean deleteDoctor(long doctorID) {
-        try {
-            if (!doctorRepository.existsById(doctorID)) {
-                return false;
-            }
-            doctorRepository.deleteById(doctorID);
-            return true;
-        } catch (Exception e) {
-            return false;
+    public void deleteDoctor(long doctorID) {
+        if (!doctorRepository.existsById(doctorID)) {
+            throw new DoctorNotFoundException("Doctor not found with ID: " + doctorID);
         }
+        doctorRepository.deleteById(doctorID);
     }
 }

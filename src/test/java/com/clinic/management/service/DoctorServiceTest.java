@@ -37,9 +37,16 @@ class DoctorServiceTest {
         );
 
         // when
-        doctorService.addDoctor(request);
+        when(doctorRepository.save(any(Doctor.class))).thenAnswer(invocation -> {
+            Doctor d = invocation.getArgument(0);
+            d.setId(1L);
+            return d;
+        });
+
+        long id = doctorService.addDoctor(request);
 
         // then
+        assertEquals(1L, id);
         verify(doctorRepository, times(1)).save(any(Doctor.class));
 
         ArgumentCaptor<Doctor> doctorCaptor = ArgumentCaptor.forClass(Doctor.class);
@@ -76,12 +83,12 @@ class DoctorServiceTest {
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
 
         // when
-        Doctor result = doctorService.getDoctor(doctorId);
+        DoctorSummaryResponse result = doctorService.getDoctor(doctorId);
 
         // then
         assertNotNull(result);
-        assertEquals(doctorId, result.getId());
-        assertEquals("Jan", result.getFirstName());
+        assertEquals(doctorId, result.id());
+        assertEquals("Jan", result.firstName());
     }
 
     @Test
@@ -96,42 +103,23 @@ class DoctorServiceTest {
     }
 
     @Test
-    void shouldDeleteDoctorWhenExistsAndReturnTrue() {
+    void shouldDeleteDoctorWhenExistsAndNotThrowException() {
         // given
         long doctorId = 1L;
         when(doctorRepository.existsById(doctorId)).thenReturn(true);
 
-        // when
-        boolean deleted = doctorService.deleteDoctor(doctorId);
-
-        // then
-        assertTrue(deleted);
+        // when & then
+        assertDoesNotThrow(() -> doctorService.deleteDoctor(doctorId));
     }
 
     @Test
-    void shouldReturnFalseWhenDoctorDoesNotExistOnDelete() {
+    void shouldThrowExceptionWhenDoctorDoesNotExistOnDelete() {
         // given
         long doctorId = 42L;
         when(doctorRepository.existsById(doctorId)).thenReturn(false);
 
-        // when
-        boolean deleted = doctorService.deleteDoctor(doctorId);
+        // when & then
 
-        // then
-        assertFalse(deleted);
-    }
-
-    @Test
-    void shouldReturnFalseWhenDeleteThrowsException() {
-        // given
-        long doctorId = 5L;
-        when(doctorRepository.existsById(doctorId)).thenReturn(true);
-        doThrow(new RuntimeException("DB error")).when(doctorRepository).deleteById(doctorId);
-
-        // when
-        boolean deleted = doctorService.deleteDoctor(doctorId);
-
-        // then
-        assertFalse(deleted);
+        assertThrowsExactly(DoctorNotFoundException.class, () -> doctorService.deleteDoctor(doctorId));
     }
 }

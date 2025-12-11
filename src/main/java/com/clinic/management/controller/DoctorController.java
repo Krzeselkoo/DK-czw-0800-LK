@@ -1,6 +1,5 @@
 package com.clinic.management.controller;
 
-import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
 import com.clinic.management.service.DoctorService;
@@ -29,6 +28,7 @@ public class DoctorController {
      * Adds a new doctor to the system.
      *
      * @param doctorRequest the request object containing doctor details
+     * @return new doctor's ID
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -40,8 +40,8 @@ public class DoctorController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "409", description = "Duplicate PESEL found")
     })
-    public void addDoctor(@Valid @RequestBody DoctorRequest doctorRequest) {
-        doctorService.addDoctor(doctorRequest);
+    public long addDoctor(@Valid @RequestBody DoctorRequest doctorRequest) {
+        return doctorService.addDoctor(doctorRequest);
     }
 
     /**
@@ -68,10 +68,10 @@ public class DoctorController {
     @Operation(summary = "Get doctor by ID", description = "Retrieve a specific doctor by their ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Doctor fetched successfully",
-                    content = @Content(schema = @Schema(implementation = Doctor.class))),
+                    content = @Content(schema = @Schema(implementation = DoctorSummaryResponse.class))),
             @ApiResponse(responseCode = "404", description = "Doctor not found")
     })
-    public Doctor getDoctor(@PathVariable long id) {
+    public DoctorSummaryResponse getDoctor(@PathVariable long id) {
         return doctorService.getDoctor(id);
     }
 
@@ -89,11 +89,8 @@ public class DoctorController {
             @ApiResponse(responseCode = "404", description = "Doctor not found")
     })
     public ResponseEntity<Void> deleteDoctor(@PathVariable long id) {
-        if (doctorService.deleteDoctor(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        doctorService.deleteDoctor(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

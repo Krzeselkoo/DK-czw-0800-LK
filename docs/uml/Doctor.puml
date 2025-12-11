@@ -3,7 +3,7 @@ class Doctor {
     - Long id
     - String firstName
     - String lastName
-    - String pesel
+    - String peselg
     - DoctorSpecialization specialization
     - String address
 }
@@ -24,10 +24,10 @@ class DoctorSummaryResponse {
 }
 
 class DoctorService {
-    + void addDoctor(DoctorRequest request)
+    + long addDoctor(DoctorRequest request)
     + List<DoctorSummaryResponse> getAllDoctors()
-    + Doctor getDoctor(long doctorID)
-    + boolean deleteDoctor(long doctorID)
+    + DoctorSummaryResponse getDoctor(long doctorID)
+    + void deleteDoctor(long doctorID)
 }
 
 class DoctorRepository {
@@ -39,9 +39,9 @@ class DoctorRepository {
 }
 
 class DoctorController {
-    + void addDoctor(DoctorRequest doctorRequest)
+    + long addDoctor(DoctorRequest doctorRequest)
     + List<DoctorSummaryResponse> getDoctors()
-    + Doctor getDoctor(long id)
+    + DoctorSummaryResponse getDoctor(long id)
     + ResponseEntity<Void> deleteDoctor(long id)
 }
 
@@ -62,6 +62,5 @@ DoctorService --> DoctorRepository
 DoctorController --> DoctorService
 DoctorController ..> DoctorRequest
 DoctorController ..> DoctorSummaryResponse
-DoctorController ..> Doctor
 DoctorRepository ..> Doctor
 @enduml
