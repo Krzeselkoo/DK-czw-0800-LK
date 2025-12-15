@@ -62,7 +62,7 @@ public class DoctorController {
      * Retrieves a specific doctor by their ID.
      *
      * @param id the ID of the doctor to retrieve
-     * @return the doctor entity
+     * @return the doctor summary response
      */
     @GetMapping("/{id}")
     @Operation(summary = "Get doctor by ID", description = "Retrieve a specific doctor by their ID")
