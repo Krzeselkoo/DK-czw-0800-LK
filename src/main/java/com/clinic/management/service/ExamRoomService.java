@@ -3,12 +3,13 @@ package com.clinic.management.service;
 import com.clinic.management.dto.ExamRoomRequest;
 import com.clinic.management.dto.ExamRoomSummaryResponse;
 import com.clinic.management.exception.DuplicateRoomCodeException;
+import com.clinic.management.exception.DutyConflictException;
 import com.clinic.management.exception.ExamRoomNotFoundException;
 import com.clinic.management.model.entity.ExamRoom;
+import com.clinic.management.repository.DutyRepository;
 import com.clinic.management.repository.ExamRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExamRoomService {
     public final ExamRoomRepository examRoomRepository;
+    private final DutyRepository dutyRepository;
 
     /**
      * Retrieves an exam room by their ID.
@@ -63,5 +65,23 @@ public class ExamRoomService {
         ExamRoom examRoom = new ExamRoom(request.getRoomCode(), request.getRoomType());
         examRoomRepository.save(examRoom);
         return examRoom.getId();
+    }
+
+    /**
+     * Deletes a specific exam room by their ID.
+     *
+     * @param roomID the ID of the room to delete
+     * @throws ExamRoomNotFoundException when there is no room with supplied ID
+     * @throws DutyConflictException when the room is assigned to duties and cannot be deleted
+     */
+    public void deleteExamRoom(long roomID) {
+        if (!examRoomRepository.existsById(roomID)) {
+            throw new ExamRoomNotFoundException("Exam room not found with ID: " + roomID);
+        }
+        // Check if room has assigned duties
+        if (dutyRepository.existsByExamRoomId(roomID)) {
+            throw new DutyConflictException("Cannot delete exam room. Room is assigned to duties.");
+        }
+        examRoomRepository.deleteById(roomID);
     }
 }
