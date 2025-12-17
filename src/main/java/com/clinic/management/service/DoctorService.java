@@ -4,8 +4,10 @@ import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
 import com.clinic.management.exception.DoctorNotFoundException;
 import com.clinic.management.exception.DuplicatePeselException;
+import com.clinic.management.exception.DutyConflictException;
 import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.repository.DoctorRepository;
+import com.clinic.management.repository.DutyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final DutyRepository dutyRepository;
 
     /**
      * Adds a new doctor to the repository.
@@ -81,10 +84,15 @@ public class DoctorService {
      *
      * @param doctorID the ID of the doctor to delete
      * @throws DoctorNotFoundException when there is no doctor with supplied ID
+     * @throws DutyConflictException when the doctor is assigned to duties and cannot be deleted
      */
     public void deleteDoctor(long doctorID) {
         if (!doctorRepository.existsById(doctorID)) {
             throw new DoctorNotFoundException("Doctor not found with ID: " + doctorID);
+        }
+        // Check if doctor has assigned duties
+        if (dutyRepository.existsByDoctorId(doctorID)) {
+            throw new DutyConflictException("Cannot delete doctor. Doctor is assigned to duties.");
         }
         doctorRepository.deleteById(doctorID);
     }

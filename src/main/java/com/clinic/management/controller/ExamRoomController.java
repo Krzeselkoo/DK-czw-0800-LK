@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExamRoomController {
     public final ExamRoomService examRoomService;
+
     /**
      * Retrieves an exam room by their ID.
      *
@@ -32,7 +34,7 @@ public class ExamRoomController {
     @Operation(summary = "Get exam room by ID", description = "Retrieve a specific room by it's ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Room fetched successfully",
-                    content = @Content(schema = @Schema(implementation = DoctorSummaryResponse.class))),
+                    content = @Content(schema = @Schema(implementation = ExamRoomSummaryResponse.class))),
             @ApiResponse(responseCode = "404", description = "Room not found")
     })
     public ExamRoomSummaryResponse getExamRoom(@PathVariable long id) {
@@ -69,9 +71,26 @@ public class ExamRoomController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "409", description = "Duplicate room code found")
     })
-    public long addDoctor(@Valid @RequestBody ExamRoomRequest roomRequest) {
+    public long addExamRoom(@Valid @RequestBody ExamRoomRequest roomRequest) {
         return examRoomService.addExamRoom(roomRequest);
     }
 
-
+    /**
+     * Deletes a specific exam room by their ID.
+     *
+     * @param id the ID of the exam room to delete
+     * @return a response entity indicating the result of the operation
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete exam room by ID", description = "Delete a specific exam room by their ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Exam room deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Exam room not found"),
+            @ApiResponse(responseCode = "409", description = "Cannot delete room. Room is assigned to duties.")
+    })
+    public ResponseEntity<Void> deleteExamRoom(@PathVariable long id) {
+        examRoomService.deleteExamRoom(id);
+        return ResponseEntity.noContent().build();
+    }
 }
