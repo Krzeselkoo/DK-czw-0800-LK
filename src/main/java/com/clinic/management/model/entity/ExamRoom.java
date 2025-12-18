@@ -6,17 +6,20 @@ import jakarta.persistence.*;
 
 @Entity
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExamRoom {
     @Id
     @GeneratedValue
     public Long id;
 
-    @NonNull
     public String roomCode;
 
-    @NonNull
     @Enumerated(EnumType.STRING)
     public RoomType roomType;
+
+    @Builder
+    private ExamRoom(@NonNull String roomCode, @NonNull RoomType roomType) {
+        this.roomCode = roomCode;
+        this.roomType = roomType;
+    }
 }

@@ -33,13 +33,14 @@ public class DoctorService {
             throw new DuplicatePeselException("Doctor with PESEL" + request.getPesel());
         }
 
-        Doctor doctor = new Doctor(
-                request.getFirstName(),
-                request.getLastName(),
-                request.getPesel(),
-                request.getSpecialization(),
-                request.getAddress()
-        );
+        Doctor doctor = Doctor.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .pesel(request.getPesel())
+                .specialization(request.getSpecialization())
+                .address(request.getAddress())
+                .build();
+
 
         doctor = doctorRepository.save(doctor);
         return doctor.getId();

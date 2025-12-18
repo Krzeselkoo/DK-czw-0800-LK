@@ -68,8 +68,19 @@ class PatientServiceTest {
 
     @Test
     void shouldGetAllPatientsAsSummary() {
-        Patient p1 = new Patient("Adam", "Nowak", "90010112345", "Krakow");
-        Patient p2 = new Patient("Ewa", "Kowalska", "80020212345", "Warszawa");
+        Patient p1 = Patient.builder()
+                .firstName("Adam")
+                .lastName("Nowak")
+                .pesel("90010112345")
+                .address("Krakow")
+                .build();
+
+        Patient p2 = Patient.builder()
+                .firstName("Ewa")
+                .lastName("Kowalska")
+                .pesel("80020212345")
+                .address("Warszawa")
+                .build();
 
         when(patientRepository.findAll()).thenReturn(List.of(p1, p2));
 
@@ -83,7 +94,13 @@ class PatientServiceTest {
     @Test
     void shouldGetPatientByIdWhenExists() {
         long id = 1L;
-        Patient p = new Patient("Adam", "Nowak", "90010112345", "Krakow");
+        Patient p = Patient.builder()
+                .firstName("Adam")
+                .lastName("Nowak")
+                .pesel("90010112345")
+                .address("Krakow")
+                .build();
+        p.setId(id);
         p.setId(id);
 
         when(patientRepository.findById(id)).thenReturn(Optional.of(p));

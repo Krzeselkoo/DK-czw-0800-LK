@@ -30,12 +30,12 @@ public class PatientService {
             throw new DuplicatePeselException("Patient with PESEL " + request.getPesel() + " already exists.");
         }
 
-        Patient patient = new Patient(
-                request.getFirstName(),
-                request.getLastName(),
-                request.getPesel(),
-                request.getAddress()
-        );
+        Patient patient = Patient.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .pesel(request.getPesel())
+                .address(request.getAddress())
+                .build();
 
         patient = patientRepository.save(patient);
         return patient.getId();

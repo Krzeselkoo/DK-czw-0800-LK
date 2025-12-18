@@ -60,8 +60,21 @@ class DoctorServiceTest {
 
     @Test
     void shouldGetAllDoctorsAsSummary() {
-        Doctor doctor1 = new Doctor("Jan", "Kowalski", "12312312312", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
-        Doctor doctor2 = new Doctor("Anna", "Nowak", "45645645645", DoctorSpecialization.NEUROLOGIST, "Kraków");
+        Doctor doctor1 = Doctor.builder()
+                .firstName("Jan")
+                .lastName("Kowalski")
+                .pesel("12312312312")
+                .specialization(DoctorSpecialization.OTOLARYNGOLOGIST)
+                .address( "Wawa")
+                .build();
+
+        Doctor doctor2 = Doctor.builder()
+                .firstName("Anna")
+                .lastName("Nowak")
+                .pesel("45645645645")
+                .specialization(DoctorSpecialization.NEUROLOGIST)
+                .address("Kraków")
+                .build();
 
         when(doctorRepository.findAll()).thenReturn(List.of(doctor1, doctor2));
 
@@ -75,7 +88,14 @@ class DoctorServiceTest {
     @Test
     void shouldGetDoctorByIdWhenExists() {
         long doctorId = 1L;
-        Doctor doctor = new Doctor("Jan", "Kowalski", "12312312312", DoctorSpecialization.OTOLARYNGOLOGIST, "Wawa");
+        Doctor doctor = Doctor.builder()
+                .firstName("Jan")
+                .lastName("Kowalski")
+                .pesel("12312312312")
+                .specialization(DoctorSpecialization.OTOLARYNGOLOGIST)
+                .address("Wawa")
+                .build();
+
         doctor.setId(doctorId);
 
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));

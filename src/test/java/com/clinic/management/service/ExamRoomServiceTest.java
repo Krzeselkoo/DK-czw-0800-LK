@@ -62,8 +62,15 @@ class ExamRoomServiceTest {
 
     @Test
     void shouldGetAllExamRooms() {
-        ExamRoom r1 = new ExamRoom("A-101", RoomType.GENERAL);
-        ExamRoom r2 = new ExamRoom("B-202", RoomType.SURGERY);
+        ExamRoom r1 = ExamRoom.builder()
+                .roomCode("A-101")
+                .roomType(RoomType.GENERAL)
+                .build();
+
+        ExamRoom r2 = ExamRoom.builder()
+                .roomCode("B-202")
+                .roomType(RoomType.SURGERY)
+                .build();
         when(examRoomRepository.findAll()).thenReturn(List.of(r1, r2));
 
         List<ExamRoomSummaryResponse> result = examRoomService.getAllExamRooms();

@@ -2,27 +2,13 @@ package com.clinic.management.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
-public class Patient {
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Patient extends Person{
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @NonNull
-    private String firstName;
-
-    @NonNull
-    private String lastName;
-
-    @NonNull
-    @Column(unique = true)
-    private String pesel;
-
-    @NonNull
-    private String address;
 }

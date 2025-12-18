@@ -66,7 +66,11 @@ public class ExamRoomService {
         if(examRoomRepository.existsByRoomCode(request.getRoomCode())){
             throw new DuplicateRoomCodeException("Room with code " + request.getRoomCode() + " is already in the database.");
         }
-        ExamRoom examRoom = new ExamRoom(request.getRoomCode(), request.getRoomType());
+        ExamRoom examRoom = ExamRoom.builder()
+                .roomCode(request.getRoomCode())
+                .roomType(request.getRoomType())
+                .build();
+
         examRoomRepository.save(examRoom);
         return examRoom.getId();
     }
