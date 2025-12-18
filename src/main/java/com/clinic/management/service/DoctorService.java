@@ -70,13 +70,17 @@ public class DoctorService {
      * @throws DoctorNotFoundException if no doctor is found with the given ID
      */
     public DoctorSummaryResponse getDoctor(long doctorID) {
-        Doctor doctor = doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
+        Doctor doctor = getDoctorEntity(doctorID);
         return new DoctorSummaryResponse(
                 doctor.getId(),
                 doctor.getFirstName(),
                 doctor.getLastName(),
                 doctor.getSpecialization()
         );
+    }
+
+    public Doctor getDoctorEntity(long doctorID) {
+        return doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
     }
 
     /**

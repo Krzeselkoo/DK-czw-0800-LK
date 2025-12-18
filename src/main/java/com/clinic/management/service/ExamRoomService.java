@@ -28,13 +28,17 @@ public class ExamRoomService {
      * @throws ExamRoomNotFoundException if no room is found with the given ID
      */
     public ExamRoomSummaryResponse getExamRoom(Long roomID){
-        ExamRoom examRoom = examRoomRepository.findById(roomID)
-                .orElseThrow(() -> new ExamRoomNotFoundException("Exam room not found with ID:" + roomID));
+        ExamRoom examRoom = getExamRoomEntity(roomID);
         return new ExamRoomSummaryResponse(
                 examRoom.getRoomCode(),
                 examRoom.getRoomType()
         );
     };
+
+    public ExamRoom getExamRoomEntity(Long roomID){
+        return examRoomRepository.findById(roomID)
+                .orElseThrow(() -> new ExamRoomNotFoundException("Exam room not found with ID:" + roomID));
+    }
 
     /**
      * Retrieves all exam rooms from the repository.
