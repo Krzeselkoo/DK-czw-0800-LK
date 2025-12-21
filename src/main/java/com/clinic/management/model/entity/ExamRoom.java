@@ -10,12 +10,12 @@ import jakarta.persistence.*;
 public class ExamRoom {
     @Id
     @GeneratedValue
-    public Long id;
+    private Long id;
 
-    public String roomCode;
+    private String roomCode;
 
     @Enumerated(EnumType.STRING)
-    public RoomType roomType;
+    private RoomType roomType;
 
     @Builder
     private ExamRoom(@NonNull String roomCode, @NonNull RoomType roomType) {

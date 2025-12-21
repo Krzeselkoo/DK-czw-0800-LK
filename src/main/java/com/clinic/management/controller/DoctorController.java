@@ -2,6 +2,7 @@ package com.clinic.management.controller;
 
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
+import com.clinic.management.dto.DutySummaryResponse;
 import com.clinic.management.service.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -91,6 +92,16 @@ public class DoctorController {
     public ResponseEntity<Void> deleteDoctor(@PathVariable long id) {
         doctorService.deleteDoctor(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/duties")
+    @Operation(summary = "Get all duties of the doctor with given ID", description = "Get all duties of the doctor with given ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Duties fetched successfully",
+                    content = @Content(schema = @Schema(implementation = DutySummaryResponse.class)))
+    })
+    public List<DutySummaryResponse> getAllDutiesForDoctor(@PathVariable long id){
+        return doctorService.getAllDutiesForDoctor(id);
     }
 }
 

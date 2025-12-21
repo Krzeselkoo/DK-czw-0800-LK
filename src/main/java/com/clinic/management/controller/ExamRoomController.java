@@ -1,6 +1,7 @@
 package com.clinic.management.controller;
 
 import com.clinic.management.dto.DoctorSummaryResponse;
+import com.clinic.management.dto.DutySummaryResponse;
 import com.clinic.management.dto.ExamRoomRequest;
 import com.clinic.management.dto.ExamRoomSummaryResponse;
 import com.clinic.management.service.ExamRoomService;
@@ -92,5 +93,16 @@ public class ExamRoomController {
     public ResponseEntity<Void> deleteExamRoom(@PathVariable long id) {
         examRoomService.deleteExamRoom(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/{id}/duties")
+    @Operation(summary = "Get all duties of the room with given ID", description = "Get all duties of the room with given ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Duties fetched successfully",
+                    content = @Content(schema = @Schema(implementation = DutySummaryResponse.class)))
+    })
+    public List<DutySummaryResponse> getAllDutiesForExamRoom(@PathVariable long id){
+        return examRoomService.getAllDutiesForExamRoom(id);
     }
 }

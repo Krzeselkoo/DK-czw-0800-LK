@@ -1,5 +1,7 @@
 package com.clinic.management.service;
 
+import com.clinic.management.dto.DoctorSummaryResponse;
+import com.clinic.management.dto.DutySummaryResponse;
 import com.clinic.management.dto.ExamRoomRequest;
 import com.clinic.management.dto.ExamRoomSummaryResponse;
 import com.clinic.management.exception.DuplicateRoomCodeException;
@@ -11,6 +13,7 @@ import com.clinic.management.repository.ExamRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExamRoomService {
     public final ExamRoomRepository examRoomRepository;
-    private final DutyRepository dutyRepository;
+    private final DutyService dutyService;
 
     /**
      * Retrieves an exam room by their ID.
@@ -30,6 +33,7 @@ public class ExamRoomService {
     public ExamRoomSummaryResponse getExamRoom(Long roomID){
         ExamRoom examRoom = getExamRoomEntity(roomID);
         return new ExamRoomSummaryResponse(
+                examRoom.getId(),
                 examRoom.getRoomCode(),
                 examRoom.getRoomType()
         );
@@ -49,6 +53,7 @@ public class ExamRoomService {
         return examRoomRepository.findAll()
                 .stream()
                 .map(room -> new ExamRoomSummaryResponse(
+                        room.getId(),
                         room.getRoomCode(),
                         room.getRoomType()
                 ))
@@ -87,9 +92,26 @@ public class ExamRoomService {
             throw new ExamRoomNotFoundException("Exam room not found with ID: " + roomID);
         }
         // Check if room has assigned duties
-        if (dutyRepository.existsByExamRoomId(roomID)) {
+        if (dutyService.existsByExamRoomId(roomID)) {
             throw new DutyConflictException("Cannot delete exam room. Room is assigned to duties.");
         }
         examRoomRepository.deleteById(roomID);
+    }
+
+    /**
+     * Retrieves all rooms available between the given dates.
+     *
+     * @param from start of the searched time window
+     * @param to end of the searched time window
+     * @return a list of exam room summary response objects
+     */
+    public List<ExamRoomSummaryResponse>  getAllAvailableRooms(LocalDate from, LocalDate to){
+        return examRoomRepository.findAvailableRooms(from, to).stream()
+                .map(er -> new ExamRoomSummaryResponse(er.getId(), er.getRoomCode(), er.getRoomType()))
+                .toList();
+    }
+
+    public List<DutySummaryResponse> getAllDutiesForExamRoom(long id){
+        return dutyService.getAllDutiesForExamRoom(id);
     }
 }

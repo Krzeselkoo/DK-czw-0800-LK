@@ -2,6 +2,7 @@ package com.clinic.management.service;
 
 import com.clinic.management.dto.DutyRequest;
 import com.clinic.management.dto.DutySummaryResponse;
+import com.clinic.management.dto.ExamRoomSummaryResponse;
 import com.clinic.management.exception.*;
 import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.model.entity.Duty;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +73,17 @@ public class DutyService {
         );
     };
 
+    public List<DutySummaryResponse> getAllDutiesForDoctor(long id) {
+        return dutyRepository.getDutiesByDoctorId(id).stream()
+                .map(duty -> new DutySummaryResponse(
+                        duty.getId(),
+                        duty.getDoctor().getId(),
+                        duty.getExamRoom().getId(),
+                        duty.getFromDate(),
+                        duty.getToDate()
+                )).toList();
+    }
+
     /**
      * Deletes a specific duty by their ID.
      *
@@ -82,5 +95,24 @@ public class DutyService {
             throw new DutyNotFoundException("Duty not found with ID:" + dutyID);
         }
         dutyRepository.deleteById(dutyID);
+    }
+
+    public List<DutySummaryResponse> getAllDutiesForExamRoom(long id) {
+        return dutyRepository.getDutiesByExamRoomId(id).stream()
+                .map(duty -> new DutySummaryResponse(
+                        duty.getId(),
+                        duty.getDoctor().getId(),
+                        duty.getExamRoom().getId(),
+                        duty.getFromDate(),
+                        duty.getToDate()
+                )).toList();
+    }
+
+    public boolean existsByDoctorId(long id){
+        return dutyRepository.existsByDoctorId(id);
+    }
+
+    public boolean existsByExamRoomId(long id){
+        return dutyRepository.existsByExamRoomId(id);
     }
 }

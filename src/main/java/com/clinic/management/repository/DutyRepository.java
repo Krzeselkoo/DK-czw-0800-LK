@@ -9,11 +9,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 @Repository
 public interface DutyRepository extends JpaRepository<Duty, Long> {
     boolean existsByDoctorId(Long doctorId);
     boolean existsByExamRoomId(Long examRoomId);
+    List<Duty> getDutiesByDoctorId(Long doctorId);
+    List<Duty> getDutiesByExamRoomId(Long id);
     @Query("SELECT " +
             "CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
             "FROM Duty d WHERE d.doctor = :doctor " +

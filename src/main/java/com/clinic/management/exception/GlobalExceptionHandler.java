@@ -14,6 +14,16 @@ import java.util.Map;
 @Hidden
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RoomOccupiedAtDateException.class)
+    public ResponseEntity<String> handleRoomOccupied(RoomOccupiedAtDateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Room is occupied: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(DoctorBusyAtDateException.class)
+    public ResponseEntity<String> handleDoctorBusy(DoctorBusyAtDateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Doctor is busy: " + ex.getMessage());
+    }
+
     @ExceptionHandler(DuplicatePeselException.class)
     public ResponseEntity<String> handleDuplicatePesel(DuplicatePeselException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());

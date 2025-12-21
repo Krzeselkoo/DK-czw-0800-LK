@@ -14,16 +14,16 @@ import java.time.LocalDate;
 public class Duty {
     @Id
     @GeneratedValue
-    public Long id;
+    private Long id;
 
     @ManyToOne
-    public Doctor doctor;
+    private Doctor doctor;
 
     @ManyToOne
-    public ExamRoom examRoom;
+    private ExamRoom examRoom;
 
-    public LocalDate fromDate;
-    public LocalDate toDate;
+    private LocalDate fromDate;
+    private LocalDate toDate;
 
     @Builder
     private Duty(@NonNull Doctor doctor, @NonNull ExamRoom examRoom, @NonNull LocalDate fromDate, @NonNull LocalDate toDate) {
