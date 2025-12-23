@@ -6,6 +6,7 @@ import com.clinic.management.model.entity.Patient;
 import com.clinic.management.model.util.DoctorSpecialization;
 import com.clinic.management.model.util.RoomType;
 import com.clinic.management.repository.DoctorRepository;
+import com.clinic.management.repository.DutyRepository;
 import com.clinic.management.repository.ExamRoomRepository;
 import com.clinic.management.repository.PatientRepository;
 import jakarta.annotation.PostConstruct;
@@ -19,7 +20,7 @@ public class InitDataService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final ExamRoomRepository examRoomRepository;
-
+    private final DutyRepository dutyRepository;
     /**
      * Populates the database with predefined dummy entities.
      * This method saves a list of entities with their details into their corresponding repository.
@@ -137,9 +138,10 @@ public class InitDataService {
 
     @PostConstruct
     public void databaseClean(){
+        dutyRepository.deleteAll();
         examRoomRepository.deleteAll();
-        patientRepository.deleteAll();
         doctorRepository.deleteAll();
+        patientRepository.deleteAll();
     }
 
 }

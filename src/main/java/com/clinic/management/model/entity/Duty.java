@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -22,11 +22,11 @@ public class Duty {
     @ManyToOne
     private ExamRoom examRoom;
 
-    private LocalDate fromDate;
-    private LocalDate toDate;
+    private LocalDateTime fromDate;
+    private LocalDateTime toDate;
 
     @Builder
-    private Duty(@NonNull Doctor doctor, @NonNull ExamRoom examRoom, @NonNull LocalDate fromDate, @NonNull LocalDate toDate) {
+    private Duty(@NonNull Doctor doctor, @NonNull ExamRoom examRoom, @NonNull LocalDateTime fromDate, @NonNull LocalDateTime toDate) {
         this.doctor = doctor;
         this.examRoom = examRoom;
         this.fromDate = fromDate;

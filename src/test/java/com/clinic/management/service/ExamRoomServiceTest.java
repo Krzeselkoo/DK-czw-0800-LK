@@ -78,32 +78,4 @@ class ExamRoomServiceTest {
         assertEquals(2, result.size());
         assertEquals("A-101", result.get(0).roomCode());
     }
-
-    @Test
-    void shouldDeleteExamRoomWhenNoDuties() {
-        long id = 1L;
-        when(examRoomRepository.existsById(id)).thenReturn(true);
-        when(dutyRepository.existsByExamRoomId(id)).thenReturn(false);
-
-        assertDoesNotThrow(() -> examRoomService.deleteExamRoom(id));
-        verify(examRoomRepository).deleteById(id);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDeletingRoomWithDuties() {
-        long id = 1L;
-        when(examRoomRepository.existsById(id)).thenReturn(true);
-        when(dutyRepository.existsByExamRoomId(id)).thenReturn(true);
-
-        assertThrows(DutyConflictException.class, () -> examRoomService.deleteExamRoom(id));
-        verify(examRoomRepository, never()).deleteById(anyLong());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDeletingNonExistentRoom() {
-        long id = 99L;
-        when(examRoomRepository.existsById(id)).thenReturn(false);
-
-        assertThrows(ExamRoomNotFoundException.class, () -> examRoomService.deleteExamRoom(id));
-    }
 }

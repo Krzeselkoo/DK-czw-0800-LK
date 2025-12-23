@@ -2,17 +2,16 @@ package com.clinic.management.service;
 
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
-import com.clinic.management.dto.DutySummaryResponse;
 import com.clinic.management.exception.DoctorNotFoundException;
 import com.clinic.management.exception.DuplicatePeselException;
-import com.clinic.management.exception.DutyConflictException;
 import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.repository.DoctorRepository;
-import com.clinic.management.repository.DutyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
-    private final DutyService dutyService;
 
     /**
      * Adds a new doctor to the repository.
@@ -30,6 +28,7 @@ public class DoctorService {
      * @throws DuplicatePeselException if a doctor with the same PESEL already exists
      * @return new doctor's ID
      */
+    @Transactional
     public long addDoctor(DoctorRequest request) {
         if (doctorRepository.existsByPesel(request.getPesel())) {
             throw new DuplicatePeselException("Doctor with PESEL" + request.getPesel());
@@ -93,23 +92,6 @@ public class DoctorService {
         return doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
     }
 
-    /**
-     * Deletes a specific doctor by their ID.
-     *
-     * @param doctorID the ID of the doctor to delete
-     * @throws DoctorNotFoundException when there is no doctor with supplied ID
-     * @throws DutyConflictException when the doctor is assigned to duties and cannot be deleted
-     */
-    public void deleteDoctor(long doctorID) {
-        if (!doctorRepository.existsById(doctorID)) {
-            throw new DoctorNotFoundException("Doctor not found with ID: " + doctorID);
-        }
-
-        if (dutyService.existsByDoctorId(doctorID)) {
-            throw new DutyConflictException("Cannot delete doctor. Doctor is assigned to duties.");
-        }
-        doctorRepository.deleteById(doctorID);
-    }
 
     /**
      * Retrieves all doctors available between the given dates.
@@ -118,13 +100,11 @@ public class DoctorService {
      * @param to end of the searched time window
      * @return a list of doctor summary response objects
      */
-    public List<DoctorSummaryResponse>  getAllAvailableDoctors(LocalDate from, LocalDate to){
+    public List<DoctorSummaryResponse>  getAllAvailableDoctors(LocalDateTime from, LocalDateTime to){
         return doctorRepository.findAvailableDoctors(from, to).stream()
                 .map(doctor -> new DoctorSummaryResponse(doctor.getId(), doctor.getFirstName(), doctor.getLastName(), doctor.getSpecialization()))
                 .toList();
     }
 
-    public List<DutySummaryResponse> getAllDutiesForDoctor(long id){
-        return dutyService.getAllDutiesForDoctor(id);
-    }
+
 }

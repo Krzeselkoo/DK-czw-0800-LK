@@ -18,42 +18,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DutyService {
     public final DutyRepository dutyRepository;
-    public final DoctorService doctorService;
-    public final ExamRoomService examRoomService;
+
     /**
-     * Adds a new duty to the repository.
+     * Retrieves all duties.
      *
-     * @param request the request object containing duty details
-     * @throws DoctorNotFoundException if a doctor with given id was not found
-     * @throws ExamRoomNotFoundException if an exam room with given id was not found
-     * @throws DoctorBusyAtDateException if the doctor is already assigned to another duty during the specified period
-     * @throws RoomOccupiedAtDateException if the exam room is already occupied during the specified period
-     * @return new duty's ID
+     * @return the list of duty summary responses
      */
-    public long addDuty(DutyRequest request) {
-        LocalDate from = request.getFromDate();
-        LocalDate to = request.getToDate();
-
-        Doctor doctor = doctorService.getDoctorEntity(request.getDoctorId());
-        if(dutyRepository.existingDoctorIsBusyAtThisTime(doctor, from, to)) {
-            throw new DoctorBusyAtDateException("Doctor already has a duty during this period.");
-        }
-
-        ExamRoom examRoom = examRoomService.getExamRoomEntity(request.getExamRoomId());
-        if(dutyRepository.existingRoomIsOccupiedAtThisTime(examRoom, from, to)) {
-            throw new RoomOccupiedAtDateException("Exam room is already occupied during this period.");
-        }
-
-        Duty duty = Duty.builder()
-                .doctor(doctor)
-                .examRoom(examRoom)
-                .fromDate(from)
-                .toDate(to)
-                .build();
-        
-        return duty.getId();
+    public List<DutySummaryResponse> getAllDuties(){
+        return dutyRepository.findAll().stream()
+                .map(duty -> new DutySummaryResponse(
+                        duty.getId(),
+                        duty.getDoctor().getId(),
+                        duty.getExamRoom().getId(),
+                        duty.getFromDate(),
+                        duty.getToDate()
+                )).toList();
     }
-
     /**
      * Retrieves a specific duty by their ID.
      *
@@ -72,18 +52,6 @@ public class DutyService {
                 duty.getToDate()
         );
     };
-
-    public List<DutySummaryResponse> getAllDutiesForDoctor(long id) {
-        return dutyRepository.getDutiesByDoctorId(id).stream()
-                .map(duty -> new DutySummaryResponse(
-                        duty.getId(),
-                        duty.getDoctor().getId(),
-                        duty.getExamRoom().getId(),
-                        duty.getFromDate(),
-                        duty.getToDate()
-                )).toList();
-    }
-
     /**
      * Deletes a specific duty by their ID.
      *
@@ -97,8 +65,13 @@ public class DutyService {
         dutyRepository.deleteById(dutyID);
     }
 
-    public List<DutySummaryResponse> getAllDutiesForExamRoom(long id) {
-        return dutyRepository.getDutiesByExamRoomId(id).stream()
+    /**
+     * Returns a list of duties for doctor with given ID.
+     *
+     * @param id the ID of the doctor whose duties will be retrieved from the database
+     */
+    public List<DutySummaryResponse> getAllDutiesForDoctor(long id) {
+        return dutyRepository.getDutiesByDoctorId(id).stream()
                 .map(duty -> new DutySummaryResponse(
                         duty.getId(),
                         duty.getDoctor().getId(),
@@ -108,11 +81,19 @@ public class DutyService {
                 )).toList();
     }
 
-    public boolean existsByDoctorId(long id){
-        return dutyRepository.existsByDoctorId(id);
-    }
-
-    public boolean existsByExamRoomId(long id){
-        return dutyRepository.existsByExamRoomId(id);
+    /**
+     * Returns a list of duties for exam room with given ID.
+     *
+     * @param id the ID of the room which duties will be retrieved from the database
+     */
+    public List<DutySummaryResponse> getAllDutiesForExamRoom(long id) {
+        return dutyRepository.getDutiesByExamRoomId(id).stream()
+                .map(duty -> new DutySummaryResponse(
+                        duty.getId(),
+                        duty.getDoctor().getId(),
+                        duty.getExamRoom().getId(),
+                        duty.getFromDate(),
+                        duty.getToDate()
+                )).toList();
     }
 }

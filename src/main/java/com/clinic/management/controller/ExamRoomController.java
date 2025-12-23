@@ -1,22 +1,24 @@
 package com.clinic.management.controller;
 
-import com.clinic.management.dto.DoctorSummaryResponse;
-import com.clinic.management.dto.DutySummaryResponse;
 import com.clinic.management.dto.ExamRoomRequest;
 import com.clinic.management.dto.ExamRoomSummaryResponse;
+import com.clinic.management.service.DutyManagementService;
 import com.clinic.management.service.ExamRoomService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExamRoomController {
     public final ExamRoomService examRoomService;
-
+    public final DutyManagementService dutyManagementService;
     /**
      * Retrieves an exam room by their ID.
      *
@@ -91,18 +93,23 @@ public class ExamRoomController {
             @ApiResponse(responseCode = "409", description = "Cannot delete room. Room is assigned to duties.")
     })
     public ResponseEntity<Void> deleteExamRoom(@PathVariable long id) {
-        examRoomService.deleteExamRoom(id);
+        dutyManagementService.deleteExamRoom(id);
         return ResponseEntity.noContent().build();
     }
 
-
-    @GetMapping("/{id}/duties")
-    @Operation(summary = "Get all duties of the room with given ID", description = "Get all duties of the room with given ID")
+    @GetMapping("/duties")
+    @Operation(summary = "Get all available rooms", description = "Get all available rooms between FROM and TO dates")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Duties fetched successfully",
-                    content = @Content(schema = @Schema(implementation = DutySummaryResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Rooms fetched successfully",
+                    content = @Content(schema = @Schema(implementation = ExamRoomSummaryResponse.class)))
     })
-    public List<DutySummaryResponse> getAllDutiesForExamRoom(@PathVariable long id){
-        return examRoomService.getAllDutiesForExamRoom(id);
+    public List<ExamRoomSummaryResponse> getAllAvailableRoomsFromTo(
+            @Parameter(description = "Start date (yyyy-MM-dd'T'HH:mm)", example = "2026-05-25T18:00")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+
+            @Parameter(description = "End date (yyyy-MM-dd'T'HH:mm)", example = "2026-05-25T19:00")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to
+    ){
+        return examRoomService.getAllAvailableRooms(from, to);
     }
 }

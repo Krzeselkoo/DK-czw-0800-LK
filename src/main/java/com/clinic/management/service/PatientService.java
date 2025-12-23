@@ -8,6 +8,7 @@ import com.clinic.management.model.entity.Patient;
 import com.clinic.management.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class PatientService {
      * @throws DuplicatePeselException if a patient with the same PESEL already exists
      * @return new patient's ID
      */
+    @Transactional
     public long addPatient(PatientRequest request) {
         if (patientRepository.existsByPesel(request.getPesel())) {
             throw new DuplicatePeselException("Patient with PESEL " + request.getPesel() + " already exists.");
@@ -80,6 +82,7 @@ public class PatientService {
      * @param id the ID of the patient to delete
      * @throws PatientNotFoundException when there is no patient with supplied ID
      */
+    @Transactional
     public void deletePatient(long id) {
         if (!patientRepository.existsById(id)) {
             throw new PatientNotFoundException("Patient not found with ID: " + id);

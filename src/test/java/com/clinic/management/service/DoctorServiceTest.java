@@ -114,32 +114,4 @@ class DoctorServiceTest {
 
         assertThrows(DoctorNotFoundException.class, () -> doctorService.getDoctor(doctorId));
     }
-
-    @Test
-    void shouldDeleteDoctorWhenExistsAndNoDuties() {
-        long doctorId = 1L;
-        when(doctorRepository.existsById(doctorId)).thenReturn(true);
-        when(dutyRepository.existsByDoctorId(doctorId)).thenReturn(false);
-
-        assertDoesNotThrow(() -> doctorService.deleteDoctor(doctorId));
-        verify(doctorRepository, times(1)).deleteById(doctorId);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDoctorHasDuties() {
-        long doctorId = 1L;
-        when(doctorRepository.existsById(doctorId)).thenReturn(true);
-        when(dutyRepository.existsByDoctorId(doctorId)).thenReturn(true);
-
-        assertThrows(DutyConflictException.class, () -> doctorService.deleteDoctor(doctorId));
-        verify(doctorRepository, never()).deleteById(anyLong());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDoctorDoesNotExistOnDelete() {
-        long doctorId = 42L;
-        when(doctorRepository.existsById(doctorId)).thenReturn(false);
-
-        assertThrowsExactly(DoctorNotFoundException.class, () -> doctorService.deleteDoctor(doctorId));
-    }
 }

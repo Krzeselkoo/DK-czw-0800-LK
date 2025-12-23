@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -17,5 +17,5 @@ public interface ExamRoomRepository extends JpaRepository<ExamRoom, Long> {
             "SELECT d.examRoom.id FROM Duty d WHERE " +
             "(d.fromDate BETWEEN :from AND :to OR d.toDate BETWEEN :from AND :to " +
             "OR (d.fromDate < :from AND d.toDate > :to)))")
-    List<ExamRoom> findAvailableRooms(@Param("from") LocalDate fromDate, @Param("to") LocalDate toDate);
+    List<ExamRoom> findAvailableRooms(@Param("from") LocalDateTime fromDate, @Param("to") LocalDateTime toDate);
 }
