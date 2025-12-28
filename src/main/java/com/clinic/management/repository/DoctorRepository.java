@@ -14,7 +14,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     boolean existsByPesel(String pesel);
 
     @Query("SELECT d FROM Doctor d WHERE d.id NOT IN (" +
-            "SELECT du.examRoom.id FROM Duty du WHERE " +
+            "SELECT du.doctor.id FROM Duty du WHERE " +
             "(du.fromDate BETWEEN :from AND :to OR du.toDate BETWEEN :from AND :to " +
             "OR (du.fromDate < :from AND du.toDate > :to)))")
     List<Doctor> findAvailableDoctors(@Param("from") LocalDateTime fromDate, @Param("to") LocalDateTime toDate);
