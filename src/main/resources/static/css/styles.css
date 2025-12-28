@@ -1,0 +1,113 @@
+/* Main styles for Clinic Management API Demo */
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+#navbar {
+    background-color: #eee;
+    padding: 10px;
+}
+
+#navbar button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+#navbar button.active {
+    font-weight: bold;
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Views */
+#view-container {
+    padding: 15px;
+    padding-bottom: 220px; /* Space for fixed output */
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+/* Forms */
+fieldset {
+    margin-bottom: 15px;
+}
+
+label {
+    display: inline-block;
+    min-width: 120px;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+    width: 100%;
+    max-width: 600px;
+    padding: 5px;
+    margin: 3px 0;
+}
+
+textarea {
+    height: 150px;
+}
+
+button {
+    margin-top: 5px;
+    margin-right: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+/* Output - Fixed at bottom */
+#output {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 10px 15px;
+    border-top: 2px solid #007bff;
+    white-space: pre-wrap;
+    height: 170px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+
+/* Details sections */
+.details-section {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.duty-list {
+    list-style: none;
+    padding: 0;
+}
+
+.duty-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
