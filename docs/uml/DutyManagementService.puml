@@ -1,0 +1,58 @@
+@startuml
+
+class DutyManagementService {
+    + long addDuty(DutyRequest request)
+    + void deleteExamRoom(long roomID)
+    + void deleteDoctor(long doctorID)
+}
+
+class ExamRoomRepository {
+    + boolean existsByRoomCode(String roomCode)
+    + List<ExamRoom> findAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate)
+    + void save(ExamRoom examRoom)
+    + Optional<ExamRoom> findById(Long id)
+    + List<ExamRoom> findAll()
+    + void deleteById(Long id)
+}
+
+class ExamRoomService {
+    + ExamRoomSummaryResponse getExamRoom(Long roomID)
+    + List<ExamRoomSummaryResponse> getAllExamRooms()
+    + Long addExamRoom(ExamRoomRequest request)
+    + List<ExamRoomSummaryResponse> getAllAvailableRooms(LocalDateTime from, LocalDateTime to)
+}
+
+class DoctorService {
+    + long addDoctor(DoctorRequest request)
+    + List<DoctorSummaryResponse> getAllDoctors()
+    + DoctorSummaryResponse getDoctor(long doctorID)
+    + Doctor getDoctorEntity(long doctorID)
+    + List<DoctorSummaryResponse>  getAllAvailableDoctors(LocalDateTime from, LocalDateTime to)
+    + void deleteDoctor(long doctorID)
+}
+
+class DoctorRepository {
+    + boolean existsByPesel(String pesel)
+    + List<Doctor> findAvailableDoctors(LocalDateTime fromDate, LocalDateTime toDate)
+    + void save(Doctor doctor)
+    + Optional<Doctor> findById(Long id)
+    + List<Doctor> findAll()
+    + void deleteById(Long id)
+}
+
+class DutyRepository{
+    + boolean existingDoctorIsBusyAtThisTime(Doctor doctor, LocalDateTime fromDate, LocalDateTime toDate)
+    + existingRoomIsOccupiedAtThisTime(ExamRoom examRoom, LocalDateTime fromDate, LocalDateTime toDate)
+    + void save(Duty duty)
+    + Optional<Duty> findById(Long id)
+    + List<Duty> findAll()
+    + void deleteById(Long id)
+}
+
+DutyManagementService --> ExamRoomRepository
+DutyManagementService --> ExamRoomService
+DutyManagementService --> DutyRepository
+DutyManagementService --> DoctorService
+DutyManagementService --> DoctorRepository
+
+@enduml

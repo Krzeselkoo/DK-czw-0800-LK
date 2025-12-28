@@ -1,0 +1,79 @@
+@startuml
+
+class Duty{
+    - Long id;
+    - Doctor doctor;
+    - ExamRoom examRoom;
+    - LocalDateTime fromDate;
+    - LocalDateTime toDate;
+}
+
+class DutyRepository{
+    + boolean existingDoctorIsBusyAtThisTime(Doctor doctor, LocalDateTime fromDate, LocalDateTime toDate)
+    + existingRoomIsOccupiedAtThisTime(ExamRoom examRoom, LocalDateTime fromDate, LocalDateTime toDate)
+    + void save(Duty duty)
+    + Optional<Duty> findById(Long id)
+    + List<Duty> findAll()
+    + void deleteById(Long id)
+}
+
+class Person{}
+class ExamRoom {
+    - Long id
+    - String roomCode
+    - RoomType roomType
+}
+
+class DutyRequest{
+    - Doctor doctor
+    - ExamRoom examRoom
+    - LocalDateTime fromDate
+    - LocalDateTime toDate
+}
+
+class DutySummaryResponse{
+    - Long dutyId
+    - Long doctorId
+    - Long examRoomId
+    - LocalDateTime fromDate
+    - LocalDateTime toDate
+
+}
+
+class DutyService{
+    + List<DutySummaryResponse> getAllDuties()
+    + DutySummaryResponse getDuty(Long dutyID)
+    + void deleteDuty(Long dutyID)
+    + List<DutySummaryResponse> getAllDutiesForDoctor(long id)
+    + List<DutySummaryResponse> getAllDutiesForExamRoom(long id)
+}
+
+class DutyManagementService {
+    + long addDuty(DutyRequest request)
+    + void deleteExamRoom(long roomID)
+    + void deleteDoctor(long doctorID)
+}
+
+class DutyController{
+    + List<DutySummaryResponse> getAllDuties()
+    + DutySummaryResponse getDutyByID(long id)
+    + long addDuty(DutyRequest dutyRequest)
+    + void deleteDuty(long id)
+    + List<DutySummaryResponse> getAllDutiesForDoctor(long id)
+    + List<DutySummaryResponse> getAllDutiesForExamRoom(long id)
+}
+
+Duty *-- Person
+Duty *-- ExamRoom
+DutyRepository ..> Duty
+DutyService --> DutyRepository
+DutyService ..> DutyRequest
+DutyService ..> DutySummaryResponse
+DutyManagementService ..> DutyRequest
+DutyController --> DutyService
+DutyController --> DutyManagementService
+DutyController ..> DutyRequest
+DutyController ..> DutySummaryResponse
+
+
+@enduml

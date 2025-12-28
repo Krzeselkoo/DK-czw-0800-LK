@@ -1,11 +1,6 @@
 @startuml
 class Doctor {
-    - Long id
-    - String firstName
-    - String lastName
-    - String peselg
     - DoctorSpecialization specialization
-    - String address
 }
 
 class DoctorRequest {
@@ -27,15 +22,18 @@ class DoctorService {
     + long addDoctor(DoctorRequest request)
     + List<DoctorSummaryResponse> getAllDoctors()
     + DoctorSummaryResponse getDoctor(long doctorID)
+    + Doctor getDoctorEntity(long doctorID)
+    + List<DoctorSummaryResponse>  getAllAvailableDoctors(LocalDateTime from, LocalDateTime to)
     + void deleteDoctor(long doctorID)
 }
 
 class DoctorRepository {
     + boolean existsByPesel(String pesel)
-    + save(Doctor doctor)
-    + findById(Long id)
-    + findAll()
-    + deleteById(Long id)
+    + List<Doctor> findAvailableDoctors(LocalDateTime fromDate, LocalDateTime toDate)
+    + void save(Doctor doctor)
+    + Optional<Doctor> findById(Long id)
+    + List<Doctor> findAll()
+    + void deleteById(Long id)
 }
 
 class DoctorController {
@@ -43,6 +41,7 @@ class DoctorController {
     + List<DoctorSummaryResponse> getDoctors()
     + DoctorSummaryResponse getDoctor(long id)
     + ResponseEntity<Void> deleteDoctor(long id)
+    +List<DoctorSummaryResponse> getAllAvailableDoctorsFromTo(LocalDateTime from, LocalDateTime to)
 }
 
 enum DoctorSpecialization {
@@ -52,15 +51,30 @@ enum DoctorSpecialization {
     PSYCHOLOGIST
 }
 
+class DutyManagementService {
+    + long addDuty(DutyRequest request)
+    + void deleteExamRoom(long roomID)
+    + void deleteDoctor(long doctorID)
+}
+
+abstract class Person {
+    - Long id
+    - String firstName
+    - String lastName
+    - String pesel
+    - String address
+}
+
+Person <|-- Doctor
 Doctor *- DoctorSpecialization
 DoctorRequest ..> DoctorSpecialization
 DoctorSummaryResponse ..> DoctorSpecialization
-DoctorService ..> Doctor
 DoctorService ..> DoctorRequest
 DoctorService ..> DoctorSummaryResponse
 DoctorService --> DoctorRepository
 DoctorController --> DoctorService
 DoctorController ..> DoctorRequest
 DoctorController ..> DoctorSummaryResponse
+DoctorController --> DutyManagementService
 DoctorRepository ..> Doctor
 @enduml

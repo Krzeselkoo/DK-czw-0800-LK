@@ -1,0 +1,68 @@
+@startuml
+
+class ExamRoom {
+    - Long id
+    - String roomCode
+    - RoomType roomType
+}
+
+class ExamRoomRequest {
+    - String roomCode
+    - RoomType roomType
+}
+
+class ExamRoomSummaryResponse {
+    - Long id
+    - String roomCode
+    - RoomType roomType
+}
+
+class ExamRoomService {
+    + ExamRoomSummaryResponse getExamRoom(Long roomID)
+    + List<ExamRoomSummaryResponse> getAllExamRooms()
+    + Long addExamRoom(ExamRoomRequest request)
+    + List<ExamRoomSummaryResponse> getAllAvailableRooms(LocalDateTime from, LocalDateTime to)
+}
+
+class ExamRoomRepository {
+    + boolean existsByRoomCode(String roomCode)
+    + List<ExamRoom> findAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate)
+    + void save(ExamRoom examRoom)
+    + Optional<ExamRoom> findById(Long id)
+    + List<ExamRoom> findAll()
+    + void deleteById(Long id)
+}
+
+class ExamRoomController {
+    + ExamRoomSummaryResponse getExamRoom(long id)
+    + List<ExamRoomSummaryResponse> getAllExamRooms()
+    + long addExamRoom(ExamRoomRequest roomRequest)
+    + ResponseEntity<Void> deleteExamRoom(long id)
+    + List<ExamRoomSummaryResponse> getAllAvailableRoomsFromTo(LocalDateTime from, LocalDateTime to)
+}
+
+class DutyManagementService {
+    + long addDuty(DutyRequest request)
+    + void deleteExamRoom(long roomID)
+    + void deleteDoctor(long doctorID)
+}
+
+enum RoomType {
+    GENERAL
+    ULTRASOUND
+    SURGERY
+}
+
+ExamRoom *- RoomType
+ExamRoomRequest ..> RoomType
+ExamRoomSummaryResponse ..> RoomType
+ExamRoomService ..> ExamRoomRequest
+ExamRoomService ..> ExamRoomSummaryResponse
+ExamRoomService --> ExamRoomRepository
+ExamRoomController --> ExamRoomService
+ExamRoomController ..> ExamRoomRequest
+ExamRoomController ..> ExamRoomSummaryResponse
+ExamRoomRepository ..> ExamRoom
+ExamRoomController --> DutyManagementService
+
+@enduml
