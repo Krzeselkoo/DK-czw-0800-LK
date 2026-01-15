@@ -8,7 +8,10 @@ import com.clinic.management.model.entity.Doctor;
 import com.clinic.management.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,18 +28,20 @@ public class DoctorService {
      * @throws DuplicatePeselException if a doctor with the same PESEL already exists
      * @return new doctor's ID
      */
+    @Transactional
     public long addDoctor(DoctorRequest request) {
         if (doctorRepository.existsByPesel(request.getPesel())) {
             throw new DuplicatePeselException("Doctor with PESEL" + request.getPesel());
         }
 
-        Doctor doctor = new Doctor(
-                request.getFirstName(),
-                request.getLastName(),
-                request.getPesel(),
-                request.getSpecialization(),
-                request.getAddress()
-        );
+        Doctor doctor = Doctor.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .pesel(request.getPesel())
+                .specialization(request.getSpecialization())
+                .address(request.getAddress())
+                .build();
+
 
         doctor = doctorRepository.save(doctor);
         return doctor.getId();
@@ -67,7 +72,7 @@ public class DoctorService {
      * @throws DoctorNotFoundException if no doctor is found with the given ID
      */
     public DoctorSummaryResponse getDoctor(long doctorID) {
-        Doctor doctor = doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
+        Doctor doctor = getDoctorEntity(doctorID);
         return new DoctorSummaryResponse(
                 doctor.getId(),
                 doctor.getFirstName(),
@@ -77,15 +82,29 @@ public class DoctorService {
     }
 
     /**
-     * Deletes a specific doctor by their ID.
+     * Retrieves a specific doctor entity by their ID. Used only for other services
      *
-     * @param doctorID the ID of the doctor to delete
-     * @throws DoctorNotFoundException when there is no doctor with supplied ID
+     * @param doctorID the ID of the doctor to retrieve
+     * @return the Doctor object
+     * @throws DoctorNotFoundException if no doctor is found with the given ID
      */
-    public void deleteDoctor(long doctorID) {
-        if (!doctorRepository.existsById(doctorID)) {
-            throw new DoctorNotFoundException("Doctor not found with ID: " + doctorID);
-        }
-        doctorRepository.deleteById(doctorID);
+    public Doctor getDoctorEntity(long doctorID) {
+        return doctorRepository.findById(doctorID).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + doctorID));
     }
+
+
+    /**
+     * Retrieves all doctors available between the given dates.
+     *
+     * @param from start of the searched time window
+     * @param to end of the searched time window
+     * @return a list of doctor summary response objects
+     */
+    public List<DoctorSummaryResponse>  getAllAvailableDoctors(LocalDateTime from, LocalDateTime to){
+        return doctorRepository.findAvailableDoctors(from, to).stream()
+                .map(doctor -> new DoctorSummaryResponse(doctor.getId(), doctor.getFirstName(), doctor.getLastName(), doctor.getSpecialization()))
+                .toList();
+    }
+
+
 }

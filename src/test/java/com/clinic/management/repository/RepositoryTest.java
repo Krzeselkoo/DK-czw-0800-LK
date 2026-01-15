@@ -29,12 +29,13 @@ class RepositoryTest {
     @Transactional
     void shouldAddDoctor(){
         //Given
-        Doctor doctor1 = new Doctor();
-        doctor1.setFirstName("John");
-        doctor1.setLastName("Doe");
-        doctor1.setPesel("12345678901");
-        doctor1.setSpecialization(DoctorSpecialization.OTOLARYNGOLOGIST);
-        doctor1.setAddress("ABC");
+        Doctor doctor1 = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .pesel("12345678901")
+                .specialization(DoctorSpecialization.OTOLARYNGOLOGIST)
+                .address("ABC")
+                .build();
 
         //When
         doctorRepository.saveAndFlush(doctor1);
@@ -53,19 +54,21 @@ class RepositoryTest {
     @Transactional
     void shouldThrowExceptionWhenAddingDoctorsWithSamePesel() {
         // Given
-        Doctor doctor1 = new Doctor();
-        doctor1.setFirstName("John");
-        doctor1.setLastName("Doe");
-        doctor1.setPesel("12345678901");
-        doctor1.setSpecialization(DoctorSpecialization.NEUROLOGIST);
-        doctor1.setAddress("ABC");
+        Doctor doctor1 = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .pesel("12345678901")
+                .specialization(DoctorSpecialization.NEUROLOGIST)
+                .address("ABC")
+                .build();
 
-        Doctor doctor2 = new Doctor();
-        doctor2.setFirstName("Johna");
-        doctor2.setLastName("Dou");
-        doctor2.setPesel("12345678901");
-        doctor2.setSpecialization(DoctorSpecialization.OTOLARYNGOLOGIST);
-        doctor2.setAddress("CBA");
+        Doctor doctor2 = Doctor.builder()
+                .firstName("Johna")
+                .lastName("Dou")
+                .pesel("12345678901")
+                .specialization(DoctorSpecialization.OTOLARYNGOLOGIST)
+                .address("CBA")
+                .build();
 
         doctorRepository.saveAndFlush(doctor1);
 

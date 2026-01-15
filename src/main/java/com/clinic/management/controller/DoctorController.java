@@ -3,18 +3,23 @@ package com.clinic.management.controller;
 import com.clinic.management.dto.DoctorRequest;
 import com.clinic.management.dto.DoctorSummaryResponse;
 import com.clinic.management.service.DoctorService;
+import com.clinic.management.service.DutyManagementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,6 +28,7 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final DutyManagementService dutyManagementService;
 
     /**
      * Adds a new doctor to the system.
@@ -62,7 +68,7 @@ public class DoctorController {
      * Retrieves a specific doctor by their ID.
      *
      * @param id the ID of the doctor to retrieve
-     * @return the doctor entity
+     * @return the doctor summary response
      */
     @GetMapping("/{id}")
     @Operation(summary = "Get doctor by ID", description = "Retrieve a specific doctor by their ID")
@@ -89,8 +95,24 @@ public class DoctorController {
             @ApiResponse(responseCode = "404", description = "Doctor not found")
     })
     public ResponseEntity<Void> deleteDoctor(@PathVariable long id) {
-        doctorService.deleteDoctor(id);
+        dutyManagementService.deleteDoctor(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/duties")
+    @Operation(summary = "Get all available doctors", description = "Get all available doctors between FROM and TO dates")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Doctors fetched successfully",
+                    content = @Content(schema = @Schema(implementation = DoctorSummaryResponse.class)))
+    })
+    public List<DoctorSummaryResponse> getAllAvailableDoctorsFromTo(
+            @Parameter(description = "Start date (yyyy-MM-dd'T'HH:mm)", example = "2026-05-25T18:00")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+
+            @Parameter(description = "End date (yyyy-MM-dd'T'HH:mm)", example = "2026-05-25T19:00")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to
+    ){
+       return doctorService.getAllAvailableDoctors(from, to);
     }
 }
 

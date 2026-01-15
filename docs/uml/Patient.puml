@@ -1,0 +1,57 @@
+@startuml
+
+abstract class Person {
+    - Long id
+    - String firstName
+    - String lastName
+    - String pesel
+    - String address
+}
+
+class Patient{
+}
+
+class PatientRepository{
+    + void save(Patient patient)
+    + Optional<Patient> findById(Long id)
+    + List<Patient> findAll()
+    + void deleteById(Long id)
+}
+
+class PatientRequest{
+    - String firstName
+    - String lastName
+    - String pesel
+    - String address
+}
+
+class PatientSummaryResponse{
+    -Long id
+    -String firstName
+    -String lastName
+}
+
+class PatientService{
+    + long addPatient(PatientRequest request)
+    + List<PatientSummaryResponse> getAllPatients()
+    + PatientSummaryResponse getPatient(long id)
+    + void deletePatient(long id)
+}
+
+class PatientController{
+    + long addPatient(PatientRequest patientRequest)
+    + List<PatientSummaryResponse> getPatients()
+    + PatientSummaryResponse getPatient(long id)
+    + ResponseEntity<Void> deletePatient(long id)
+}
+
+Person <|-- Patient
+PatientRepository ..> Patient
+PatientService ..> PatientSummaryResponse
+PatientService ..> PatientRequest
+PatientService --> PatientRepository
+PatientController ..> PatientSummaryResponse
+PatientController ..> PatientRequest
+PatientController --> PatientService
+
+@enduml
