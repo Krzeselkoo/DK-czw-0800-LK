@@ -75,18 +75,4 @@ public class PatientService {
                 patient.getLastName()
         );
     }
-
-    /**
-     * Deletes a specific patient by their ID.
-     *
-     * @param id the ID of the patient to delete
-     * @throws PatientNotFoundException when there is no patient with supplied ID
-     */
-    @Transactional
-    public void deletePatient(long id) {
-        if (!patientRepository.existsById(id)) {
-            throw new PatientNotFoundException("Patient not found with ID: " + id);
-        }
-        patientRepository.deleteById(id);
-    }
 }
