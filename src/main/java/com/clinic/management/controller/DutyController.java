@@ -4,6 +4,7 @@ import com.clinic.management.dto.DutyRequest;
 import com.clinic.management.dto.DutySummaryResponse;
 import com.clinic.management.service.DutyManagementService;
 import com.clinic.management.service.DutyService;
+import com.clinic.management.service.VisitManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +24,7 @@ import java.util.List;
 public class DutyController {
     private final DutyService dutyService;
     private final DutyManagementService dutyManagementService;
-
+    private final VisitManagementService visitManagementService;
     @GetMapping
     @Operation(summary = "Get all duties", description = "Get all duties in the system")
     @ApiResponses(value = {
@@ -66,9 +67,7 @@ public class DutyController {
             @ApiResponse(responseCode = "204", description = "Duty deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Duty not found")
     })
-    public void deleteDuty(@PathVariable long id){
-        dutyService.deleteDuty(id);
-    }
+    public void deleteDuty(@PathVariable long id){ visitManagementService.deleteDuty(id); }
 
     @GetMapping("/by-doctor/{id}")
     @Operation(summary = "Get all duties of the doctor with given ID", description = "Get all duties of the doctor with given ID")

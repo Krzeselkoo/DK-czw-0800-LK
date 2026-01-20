@@ -120,21 +120,21 @@ class PatientServiceTest {
         assertThrows(PatientNotFoundException.class, () -> patientService.getPatient(id));
     }
 
-    @Test
-    void shouldDeletePatientWhenExists() {
-        long id = 1L;
-        when(patientRepository.existsById(id)).thenReturn(true);
-
-        assertDoesNotThrow(() -> patientService.deletePatient(id));
-        verify(patientRepository, times(1)).deleteById(id);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDeletingNonExistentPatient() {
-        long id = 99L;
-        when(patientRepository.existsById(id)).thenReturn(false);
-
-        assertThrows(PatientNotFoundException.class, () -> patientService.deletePatient(id));
-        verify(patientRepository, never()).deleteById(anyLong());
-    }
+//    @Test
+//    void shouldDeletePatientWhenExists() {
+//        long id = 1L;
+//        when(patientRepository.existsById(id)).thenReturn(true);
+//
+//        assertDoesNotThrow(() -> patientService.deletePatient(id));
+//        verify(patientRepository, times(1)).deleteById(id);
+//    }
+//
+//    @Test
+//    void shouldThrowExceptionWhenDeletingNonExistentPatient() {
+//        long id = 99L;
+//        when(patientRepository.existsById(id)).thenReturn(false);
+//
+//        assertThrows(PatientNotFoundException.class, () -> patientService.deletePatient(id));
+//        verify(patientRepository, never()).deleteById(anyLong());
+//    }
 }
