@@ -1,5 +1,6 @@
 package com.clinic.management.service;
 
+import com.clinic.management.config.AppConfig;
 import com.clinic.management.dto.VisitRequest;
 import com.clinic.management.exception.DutyNotFoundException;
 import com.clinic.management.exception.PatientNotFoundException;
@@ -11,6 +12,7 @@ import com.clinic.management.repository.DutyRepository;
 import com.clinic.management.repository.PatientRepository;
 import com.clinic.management.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +24,10 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class VisitManagementService {
-    private final int VISIT_DURATION = 15;
     private final PatientRepository patientRepository;
     private final DutyRepository dutyRepository;
     private final VisitRepository visitRepository;
+    private final AppConfig appConfig;
 
     /**
      * Creates a new visit in the system.
@@ -85,7 +87,7 @@ public class VisitManagementService {
             }
 
             while (dutyStart.isBefore(dutyEnd)) {
-                LocalDateTime slotEnd = dutyStart.plusMinutes(VISIT_DURATION);
+                LocalDateTime slotEnd = dutyStart.plusMinutes(appConfig.getVisitDuration());
 
                 if (slotEnd.isAfter(dutyEnd) || dutyStart.isBefore(now)) {
                     dutyStart = slotEnd;
@@ -103,12 +105,12 @@ public class VisitManagementService {
 
     private boolean isSlotAvailable(List<Visit> patientVisits, List<Visit> doctorVisits, LocalDateTime dutyStart, LocalDateTime slotEnd) {
         boolean isPatientSlotAvailable = patientVisits.stream().noneMatch(visit -> {
-            LocalDateTime visitEnd = visit.getStartDate().plusMinutes(VISIT_DURATION);
+            LocalDateTime visitEnd = visit.getStartDate().plusMinutes(appConfig.getVisitDuration());
             return visit.getStartDate().isBefore(slotEnd) && visitEnd.isAfter(dutyStart);
         });
 
         boolean isDoctorSlotAvailable = doctorVisits.stream().noneMatch(visit -> {
-            LocalDateTime visitEnd = visit.getStartDate().plusMinutes(VISIT_DURATION);
+            LocalDateTime visitEnd = visit.getStartDate().plusMinutes(appConfig.getVisitDuration());
             return visit.getStartDate().isBefore(slotEnd) && visitEnd.isAfter(dutyStart);
         });
 

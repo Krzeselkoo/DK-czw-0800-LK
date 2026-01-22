@@ -1,10 +1,12 @@
 package com.clinic.management.service;
 
+import com.clinic.management.config.AppConfig;
 import com.clinic.management.dto.VisitSummaryResponse;
 import com.clinic.management.exception.VisitNotFoundException;
 import com.clinic.management.model.entity.Visit;
 import com.clinic.management.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +17,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class VisitService {
-    private final int VISIT_DURATION = 15;
     private final VisitRepository visitRepository;
+    private final AppConfig appConfig;
 
     /**
      * Retrieves all visits from the repository.
@@ -31,7 +33,7 @@ public class VisitService {
                         visit.getDuty().getDoctor().getId(),
                         visit.getDuty().getExamRoom().getRoomCode(),
                         visit.getStartDate(),
-                        VISIT_DURATION,
+                        appConfig.getVisitDuration(),
                         visit.getDuty().getId()
                 )).collect(Collectors.toList());
     }
@@ -50,7 +52,7 @@ public class VisitService {
                 visit.getDuty().getDoctor().getId(),
                 visit.getDuty().getExamRoom().getRoomCode(),
                 visit.getStartDate(),
-                VISIT_DURATION,
+                appConfig.getVisitDuration(),
                 visit.getDuty().getId()
         );
     }
@@ -105,7 +107,7 @@ public class VisitService {
                         visit.getDuty().getDoctor().getId(),
                         visit.getDuty().getExamRoom().getRoomCode(),
                         visit.getStartDate(),
-                        VISIT_DURATION,
+                        appConfig.getVisitDuration(),
                         visit.getDuty().getId()
                 )).collect(Collectors.toList());
     }
