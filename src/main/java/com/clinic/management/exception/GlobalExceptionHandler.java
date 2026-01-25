@@ -1,6 +1,7 @@
 package com.clinic.management.exception;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -70,5 +71,15 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(VisitNotFoundException.class)
+    public ResponseEntity<String> handleVisitNotFound(VisitNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(VisitConflictException.class)
+    public ResponseEntity<String> handleVisitConflict(VisitConflictException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

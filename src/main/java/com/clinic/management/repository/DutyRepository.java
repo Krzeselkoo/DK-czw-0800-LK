@@ -17,6 +17,11 @@ public interface DutyRepository extends JpaRepository<Duty, Long> {
     boolean existsByExamRoomId(Long examRoomId);
     List<Duty> getDutiesByDoctorId(Long doctorId);
     List<Duty> getDutiesByExamRoomId(Long id);
+    @Query("SELECT d FROM Duty d WHERE d.doctor.id = :doctorId AND " +
+            "(d.fromDate <= :to AND d.toDate >= :from)")
+    List<Duty> findDutiesByDoctorIdAndDateRange(@Param("doctorId") Long doctorId,
+                                                @Param("from") LocalDateTime from,
+                                                @Param("to") LocalDateTime to);
     @Query("SELECT " +
             "CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
             "FROM Duty d WHERE d.doctor = :doctor " +

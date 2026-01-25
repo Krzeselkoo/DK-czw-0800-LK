@@ -39,15 +39,7 @@ public class DutyManagementService {
         LocalDateTime from = request.getFromDate();
         LocalDateTime to = request.getToDate();
 
-        if(from.isEqual(to) || from.isAfter(to)){
-            throw new InvalidTimeWindowException("The FROM date has to be before TO date.");
-        }
-
-        long durationInMinutes = Duration.between(from, to).toMinutes();
-
-        if(durationInMinutes < 60 || durationInMinutes > 480){
-            throw new InvalidTimeWindowException("The time window has to be between 1 hour and 8 hours (inclusive) in length");
-        }
+        checkCorrectTimeWindow(from, to);
 
         Doctor doctor = doctorService.getDoctorEntity(request.getDoctorId());
         if(dutyRepository.existingDoctorIsBusyAtThisTime(doctor, from, to)) {
@@ -107,5 +99,25 @@ public class DutyManagementService {
             throw new DutyConflictException("Cannot delete doctor. Doctor is assigned to duties.");
         }
         doctorRepository.deleteById(doctorID);
+    }
+
+    private void checkCorrectTimeWindow(LocalDateTime from, LocalDateTime to) throws InvalidTimeWindowException{
+        if(from.isEqual(to) || from.isAfter(to)){
+            throw new InvalidTimeWindowException("The FROM date has to be before TO date.");
+        }
+
+        long durationInMinutes = Duration.between(from, to).toMinutes();
+
+        if(durationInMinutes < 60 || durationInMinutes > 480){
+            throw new InvalidTimeWindowException("The time window has to be between 1 hour and 8 hours (inclusive) in length");
+        }
+
+        int fromHour = from.getHour();
+        int toHour = to.getHour();
+        int toMinutes = to.getMinute();
+
+        if(fromHour < 8 || toHour > 16 || (toHour == 16 && toMinutes != 0)){
+            throw new InvalidTimeWindowException("The clinic works from 8 AM to 4PM (8-16).");
+        }
     }
 }

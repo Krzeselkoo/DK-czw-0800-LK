@@ -1,17 +1,24 @@
 # Clinic Management System
 
-A comprehensive system for managing clinic operations, including doctors, exam rooms, duties, and patients.
+A comprehensive system for managing clinic operations, including doctors, patients, exam rooms, duties, and visits.
 ## Technologies Used
 - **Java** (Spring Boot) for backend development
 - **Gradle** for dependency management
+- **HTML & javascript** for simple user interface 
 - **Swagger** for API documentation
 - **H2 Database** for development and testing
 
 ## Key Features
-- Manage doctors, exam rooms, and duties
+- Manage doctors, patients, exam rooms, duties and visits
 - RESTful API for seamless integration
 - Validation and error handling for robust operations
 - UML diagrams for clear system design
+
+## Database
+Below is shown the database diagram used in the project.
+
+
+![DatabaseDiagram.png](docs/database/database_scheme.png)
 
 ## UML Diagrams
 
@@ -28,6 +35,9 @@ Below are the UML diagrams representing the structure of the project.
 
 ### Duty's domain - Class Diagram
 ![DutysClassDiagram.png](docs/uml/Duty.png)
+
+### Visit's domain - Class Diagram
+![VisitsClassDiagram.png](docs/uml/Visit.png)
 
 ### Duty Management Service's - Helper Class Diagram
 ![DutyManagementServicesClassDiagram.png](docs/uml/DutyManagementService.png)
@@ -187,7 +197,7 @@ If the operation is successful, the returned status code should be **204**.
 
 ## API Documentation - Duty Service
 
-### Listing all Duty
+### Listing all Duties
 To list all duties in the database, simply click the "Load all duties" button below.
 
 ![GetAllDuty.png](docs/screenshots/Duty/GetAllDuties.png)
@@ -239,7 +249,7 @@ If the operation is successful, the returned status code should be **200** and t
 
 ![GetDutyResponse.png](docs/screenshots/Duty/GetDutyResponse.png)
 
-### Deleting the Exam Room from the Database
+### Deleting the Duty from the Database
 To delete the duty with specific ID, you need to supply the text field with ID and then click the "Delete duty" button below.
 
 ![DeleteDuty.png](docs/screenshots/Duty/DeleteDuty.png)
@@ -247,6 +257,20 @@ To delete the duty with specific ID, you need to supply the text field with ID a
 If there is no duty with the supplied ID, the returned status code should be **404**.
 
 If the operation is successful, the returned status code should be **204**.
+
+## API Documentation - Visit Service
+
+### Adding new Visit
+To properly add a new visit, you need to pick the patient, the doctor and the dates between which the visit shall take place and then click the "Find available slots" button.
+
+Next step is to choose an available appointment from the shown calendar. If the calendar is empty, it means that the given combination of patient and doctor are unable to make an appointment between these dates.
+
+![AddVisit.png](docs/screenshots/Visit/AddVisit.png)
+
+If the operation is successful, the returned status code should be **201** and the returned value will be the new visit's ID.
+
+#### More functionalities of Visit Service are not implemented in the UI yet, but they are possible to try out in Swagger.
+
 
 ## Authors
 - [Łukasz Krementowski](https://github.com/Krzeselkoo)

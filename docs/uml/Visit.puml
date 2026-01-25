@@ -1,0 +1,70 @@
+@startuml
+class Visit {
+    - Long id
+    - Patient patient
+    - Duty duty
+    - LocalDateTime startDate
+}
+
+class VisitRepository {
+    + boolean existsByDutyId(Long dutyId)
+    + boolean existsByPatientId(Long patientId)
+    + List<Visit> findAllByPatientId(Long patientId)
+    + List<Visit> findAllByDutyId(Long dutyId)
+    + Optional<Visit> findVisitByDutyIdAndStartDateWithLock(Long dutyId, LocalDateTime startDate)
+    + List<Visit> findAllByDoctorId(Long doctorId)
+    + List<Visit> findVisitsByPatientIdAndDateRange(Long patientId, LocalDateTime from, LocalDateTime to)
+    + List<Visit> findVisitsByDoctorIdAndDateRange(Long doctorId, LocalDateTime from, LocalDateTime to)
+}
+
+class VisitService {
+    + List<VisitSummaryResponse> getAllVisits()
+    + VisitSummaryResponse getVisitById(Long visitId)
+    + List<VisitSummaryResponse> getAllVisitsForDoctor(Long doctorId)
+    + List<VisitSummaryResponse> getAllVisitsForPatient(Long patientId)
+    + List<VisitSummaryResponse> getAllVisitsForDuty(Long dutyId)
+    + void deleteVisit(Long id)
+}
+
+class VisitManagementService {
+    + Long addVisit(VisitRequest request)
+    + Map<LocalDateTime, Long> generateAvailableHoursForVisit(Long patientId, Long doctorId, LocalDateTime from, LocalDateTime to)
+    + void deleteDuty(Long dutyID)
+    + void deletePatient(Long patientId)
+}
+
+class VisitRequest {
+    - Long patientId
+    - Long dutyId
+    - LocalDateTime startDate
+}
+
+class VisitSummaryResponse {
+    - Long patientId
+    - Long doctorId
+    - String roomCode
+    - LocalDateTime startTime
+    - int durationInMinutes
+    - Long dutyId
+}
+
+class VisitController {
+    + Long addVisit(VisitRequest request)
+    + void deleteVisit(Long visitId)
+    + VisitSummaryResponse getVisitById(Long visitId)
+    + List<VisitSummaryResponse> getAllVisits()
+    + List<VisitSummaryResponse> getAllVisitsForPatient(Long patientId)
+    + List<VisitSummaryResponse> getAllVisitsForDoctor(Long doctorId)
+    + List<VisitSummaryResponse> getAllVisitsForDuty(Long dutyId)
+    + Map<LocalDateTime, Long> generateAvailableHoursForVisit(Long patientId, Long doctorId, LocalDateTime from, LocalDateTime to)
+}
+VisitRepository ..> Visit
+VisitService ..> VisitSummaryResponse
+VisitManagementService ..> VisitRequest
+VisitService --> VisitRepository
+VisitManagementService --> VisitRepository
+VisitController --> VisitManagementService
+VisitController --> VisitService
+VisitController ..> VisitRequest
+VisitController ..> VisitSummaryResponse
+@enduml

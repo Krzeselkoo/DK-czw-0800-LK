@@ -11,6 +11,8 @@ import com.clinic.management.repository.ExamRoomRepository;
 import com.clinic.management.repository.PatientRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +31,7 @@ public class InitDataService {
         initializeDoctors();
         initializePatients();
         initializeExamRooms();
+        createSampleDuties();
     }
 
     private void initializeDoctors(){
@@ -133,6 +136,43 @@ public class InitDataService {
         examRoomRepository.save(ExamRoom.builder()
                 .roomCode("C-303")
                 .roomType(RoomType.GENERAL)
+                .build());
+    }
+
+    private void createSampleDuties() {
+        List<Doctor> doctors = doctorRepository.findAll();
+        List<ExamRoom> rooms = examRoomRepository.findAll();
+        if (doctors.isEmpty() || rooms.isEmpty()) return;
+
+        Doctor d = doctors.get(0);
+        ExamRoom r = rooms.get(0);
+
+        dutyRepository.save(com.clinic.management.model.entity.Duty.builder()
+                .doctor(d)
+                .examRoom(r)
+                .fromDate(LocalDateTime.of(2026, 1, 21, 8, 0))
+                .toDate(LocalDateTime.of(2026, 1, 21, 16, 0))
+                .build());
+
+        dutyRepository.save(com.clinic.management.model.entity.Duty.builder()
+                .doctor(d)
+                .examRoom(r)
+                .fromDate(LocalDateTime.of(2026, 1, 22, 8, 0))
+                .toDate(LocalDateTime.of(2026, 1, 22, 16, 0))
+                .build());
+
+        dutyRepository.save(com.clinic.management.model.entity.Duty.builder()
+                .doctor(d)
+                .examRoom(r)
+                .fromDate(LocalDateTime.of(2026, 1, 23, 8, 0))
+                .toDate(LocalDateTime.of(2026, 1, 23, 16, 0))
+                .build());
+
+        dutyRepository.save(com.clinic.management.model.entity.Duty.builder()
+                .doctor(d)
+                .examRoom(r)
+                .fromDate(LocalDateTime.of(2026, 1, 24, 8, 0))
+                .toDate(LocalDateTime.of(2026, 1, 24, 16, 0))
                 .build());
     }
 

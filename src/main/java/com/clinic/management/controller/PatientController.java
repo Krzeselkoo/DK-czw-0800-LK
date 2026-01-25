@@ -3,6 +3,7 @@ package com.clinic.management.controller;
 import com.clinic.management.dto.PatientRequest;
 import com.clinic.management.dto.PatientSummaryResponse;
 import com.clinic.management.service.PatientService;
+import com.clinic.management.service.VisitManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,6 +24,7 @@ import java.util.List;
 public class PatientController {
 
     private final PatientService patientService;
+    private final VisitManagementService visitManagementService;
 
     /**
      * Adds a new patient to the system.
@@ -89,7 +91,7 @@ public class PatientController {
             @ApiResponse(responseCode = "404", description = "Patient not found")
     })
     public ResponseEntity<Void> deletePatient(@PathVariable long id) {
-        patientService.deletePatient(id);
+        visitManagementService.deletePatient(id);
         return ResponseEntity.noContent().build();
     }
 }
